@@ -1,4 +1,4 @@
-# ClamAV Validator Rules For Laravel 4
+# ClamAV Validator For Laravel 4
 
 Custom Laravel 4 Validator for file upload ClamAV anti-virus check.
 
@@ -6,7 +6,7 @@ Custom Laravel 4 Validator for file upload ClamAV anti-virus check.
 
 * [Installation](#installation)
 * [Usage](#usage)
-* [Copyright and License](#copyright)
+* [Author](#author)
 
 <a name="installation"></a>
 ## Installation
@@ -54,7 +54,9 @@ $rules = array(
 ```
 
 
-<a name="copyright"></a>
-## Copyright and License
+<a name="author"></a>
+## Author
 
-Copyright 2014 Krishnaprasad MG
+Krishnaprasad MG [@sunspikes]
+
+_Contact me at [sunspikes at gmail dot com]_
