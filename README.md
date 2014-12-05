@@ -1,6 +1,6 @@
 # ClamAV Validator For Laravel 4
 
-Custom Laravel 4 Validator for file upload ClamAV anti-virus check.
+Custom Laravel 4 anti-virus validator for file uploads.
 
 **Note:** this package requires [PHP-ClamAV extension](http://php-clamav.sourceforge.net/).
 
