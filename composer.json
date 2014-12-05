@@ -1,6 +1,6 @@
 {
     "name": "sunspikes/clamav-validator",
-    "description": "Custom Laravel 4 Validator for file upload ClamAV anti-virus check.",
+    "description": "Custom Laravel 4 anti-virus validator for file uploads.",
 	"keywords": ["laravel", "validator", "clamav", "virus"],
 	"homepage": "https://github.com/sunspikes/clamav-validator",
 	"license": "MIT",
