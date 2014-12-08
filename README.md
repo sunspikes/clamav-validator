@@ -52,7 +52,9 @@ $rules = array(
 
 <a name="changelog"></a>
 ## Change Log
+
 2014.12.05 - Initial version, using extension php-clamav)
+
 2014.12.05 - Removed the dependency php-clamav, Now using [Quahog](https://github.com/jonjomckay/quahog)
 
 <a name="author"></a>
