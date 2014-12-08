@@ -12,7 +12,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "ext-clamav": "*",
+        "blurgroup/quahog": "0.*"
         "illuminate/support": "4.2.*",
         "illuminate/validation": ">=4.1.21"
     },

@@ -6,13 +6,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class ClamavValidator extends Validator
 {
 	/**
-	 * ClamAV scan clean staus code
-	 *
-	 * @var integer
-	 */
-	const CLAMAV_STATUS_CLEAN = 0;
-
-	/**
 	 * Creates a new instance of ClamavValidator
 	 */
 	public function __construct($translator, $data, $rules, $messages)
@@ -32,9 +25,16 @@ class ClamavValidator extends Validator
 	{
 		$file = $this->getFilePath($value);
 
-		$code = cl_scanfile($file, $virusname);
+		// Create a new socket instance
+		$socket = (new \Socket\Raw\Factory())->createClient('unix:///var/run/clamav/clamd.ctl');
+		
+		// Create a new instance of the Client
+		$quahog = new \Quahog\Client($socket);
+		
+		// Scan the file
+		$result = $quahog->scanFile($file);
 
-		if ($code !== self::CLAMAV_STATUS_CLEAN) 
+		if ($result['status'] != 'OK') 
 		{
 			return false;
 		}

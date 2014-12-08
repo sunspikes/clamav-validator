@@ -2,16 +2,13 @@
 
 Custom Laravel 4 anti-virus validator for file uploads.
 
-**Note:** this package requires [PHP-ClamAV extension](http://php-clamav.sourceforge.net/).
-
 * [Installation](#installation)
 * [Usage](#usage)
+* [Change Log](#changelog)
 * [Author](#author)
 
 <a name="installation"></a>
 ## Installation
-
-Install and configure the PHP ClamAV extension from [Sourceforge](http://php-clamav.sourceforge.net/)
 
 Install the package through [Composer](http://getcomposer.org).
 
@@ -21,7 +18,6 @@ In your `composer.json` file:
 {
 	"require": {
 		"laravel/framework": ">=4.1.21",
-		// ...
 		"sunspikes/clamav-validator": "dev-master"
 	}
 }
@@ -53,6 +49,11 @@ $rules = array(
 );
 ```
 
+
+<a name="changelog"></a>
+## Change Log
+2014.12.05 - Initial version, using extension php-clamav)
+2014.12.05 - Removed the dependency php-clamav, Now using [Quahog](https://github.com/jonjomckay/quahog)
 
 <a name="author"></a>
 ## Author
