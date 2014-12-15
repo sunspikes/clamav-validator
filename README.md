@@ -1,5 +1,7 @@
 # ClamAV Validator For Laravel 4
 
+[![Build Status](https://scrutinizer-ci.com/g/sunspikes/clamav-validator/badges/build.png?b=master)](https://scrutinizer-ci.com/g/sunspikes/clamav-validator) [![Code Quality](https://scrutinizer-ci.com/g/sunspikes/clamav-validator/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/sunspikes/clamav-validator)
+
 Custom Laravel 4 anti-virus validator for file uploads.
 
 * [Installation](#installation)
