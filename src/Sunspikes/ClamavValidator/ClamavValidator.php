@@ -10,6 +10,11 @@ class ClamavValidator extends Validator
 	 */
 	const CLAMAV_STATUS_OK = 'OK';
 	
+	/** 
+	 * @const string CLAMAV_UNIX_SOCKET
+	 */
+	const CLAMAV_UNIX_SOCKET = 'unix:///var/run/clamav/clamd.ctl';
+
 	/**
 	 * Creates a new instance of ClamavValidator
 	 */
@@ -31,7 +36,7 @@ class ClamavValidator extends Validator
 		$file = $this->getFilePath($value);
 
 		// Create a new socket instance
-		$socket = (new \Socket\Raw\Factory())->createClient('unix:///var/run/clamav/clamd.ctl');
+		$socket = (new \Socket\Raw\Factory())->createClient(self::CLAMAV_UNIX_SOCKET);
 		
 		// Create a new instance of the Client
 		$quahog = new \Quahog\Client($socket);
@@ -63,7 +68,7 @@ class ClamavValidator extends Validator
 		}
 
 		// if we're passed a PHP file upload array, return the "tmp_name"
-		if (is_array($file) && array_get($file, 'tmp_name') !== null) {
+		if (is_array($file) && null !== array_get($file, 'tmp_name')) {
 			return $file['tmp_name'];
 		}
 
