@@ -5,6 +5,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ClamavValidator extends Validator
 {
+	/** 
+	 * @const string CLAMAV_STATUS_OK
+	 */
+	const CLAMAV_STATUS_OK = 'OK';
+	
 	/**
 	 * Creates a new instance of ClamavValidator
 	 */
@@ -33,8 +38,9 @@ class ClamavValidator extends Validator
 		
 		// Scan the file
 		$result = $quahog->scanFile($file);
-
-		if ($result['status'] != 'OK') 
+		
+		// Check if scan result is not clean
+		if (self::CLAMAV_STATUS_OK != $result['status']) 
 		{
 			return false;
 		}
