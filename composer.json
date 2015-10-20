@@ -1,6 +1,6 @@
 {
     "name": "sunspikes/clamav-validator",
-    "description": "Custom Laravel 4 anti-virus validator for file uploads.",
+    "description": "Custom Laravel 5 anti-virus validator for file uploads.",
 	"keywords": ["laravel", "validator", "clamav", "virus"],
 	"homepage": "https://github.com/sunspikes/clamav-validator",
 	"license": "MIT",
@@ -13,7 +13,7 @@
     "require": {
         "php": ">=5.4.0",
         "blurgroup/quahog": "1.4",
-        "illuminate/support": "4.2.*",
+        "illuminate/support": ">=4.2",
         "illuminate/validation": ">=4.1.21"
     },
 	"require-dev": {

@@ -3,44 +3,45 @@
 use Illuminate\Validation\Factory;
 use Illuminate\Support\Str;
 
-class ValidateServiceProviderTest extends PHPUnit_Framework_TestCase {
+class ValidateServiceProviderTest extends PHPUnit_Framework_TestCase
+{
 
-	public function testBoot()
-	{
+    public function testBoot()
+    {
 
-		$translator = Mockery::mock('Symfony\Component\Translation\TranslatorInterface');
-		$translator->shouldReceive('get');
+        $translator = Mockery::mock('Symfony\Component\Translation\TranslatorInterface');
+        $translator->shouldReceive('get');
 
-		$presence = Mockery::mock('Illuminate\Validation\PresenceVerifierInterface');
+        $presence = Mockery::mock('Illuminate\Validation\PresenceVerifierInterface');
 
-		$factory = new Factory($translator);
-		$factory->setPresenceVerifier($presence);
+        $factory = new Factory($translator);
+        $factory->setPresenceVerifier($presence);
 
-		$container = Mockery::mock('Illuminate\Container\Container');
-		$container->shouldReceive('bind');
-		$container->shouldReceive('offsetGet')->with('translator')->andReturn($translator);
-		$container->shouldReceive('offsetGet')->with('validator')->andReturn($factory);
+        $container = Mockery::mock('Illuminate\Container\Container');
+        $container->shouldReceive('bind');
+        $container->shouldReceive('offsetGet')->with('translator')->andReturn($translator);
+        $container->shouldReceive('offsetGet')->with('validator')->andReturn($factory);
 
-		$sp = Mockery::mock('Sunspikes\ClamavValidator\ClamavValidatorServiceProvider[package]', array($container));
-		$sp->shouldReceive('package');
-		$sp->boot();
+        $sp = Mockery::mock('Sunspikes\ClamavValidator\ClamavValidatorServiceProvider[package]', array($container));
+        $sp->shouldReceive('package');
+        $sp->boot();
 
-		$validator = $factory->make(array(), array());
+        $validator = $factory->make(array(), array());
 
-		foreach ($validator->getExtensions() as $rule => $class_and_method)
-		{
-			$this->assertTrue(in_array($rule, $sp->getRules()));
-			$this->assertEquals('Sunspikes\ClamavValidator\ClamavValidator@' . 'validate' . studly_case($rule), $class_and_method);
+        foreach ($validator->getExtensions() as $rule => $class_and_method) {
+            $this->assertTrue(in_array($rule, $sp->getRules()));
+            $this->assertEquals('Sunspikes\ClamavValidator\ClamavValidator@' . 'validate' . studly_case($rule), $class_and_method);
 
-			list($class, $method) = Str::parseCallback($class_and_method, null);
+            list($class, $method) = Str::parseCallback($class_and_method, null);
 
-			$this->assertTrue(method_exists($class, $method));
-		}
+            $this->assertTrue(method_exists($class, $method));
+        }
 
-	}
+    }
 
-	public function tearDown() {
-		Mockery::close();
-	}
+    public function tearDown()
+    {
+        Mockery::close();
+    }
 
 }
