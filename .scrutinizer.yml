@@ -1,6 +1,9 @@
+php:
+    code_rating: true
+
 filter:
     paths:
-        - src/*
+        - src/ClamavValidator/*
 
 tools:
     external_code_coverage: true
