@@ -1,6 +1,6 @@
 # ClamAV Validator For Laravel 5
 
-[![Build Status](https://scrutinizer-ci.com/g/sunspikes/clamav-validator/badges/build.png?b=master)](https://scrutinizer-ci.com/g/sunspikes/clamav-validator) [![Code Quality](https://scrutinizer-ci.com/g/sunspikes/clamav-validator/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/sunspikes/clamav-validator)
+[![Build Status](https://travis-ci.org/sunspikes/clamav-validator.svg?branch=master)](https://travis-ci.org/sunspikes/clamav-validator) [![Code Quality](https://scrutinizer-ci.com/g/sunspikes/clamav-validator/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/sunspikes/clamav-validator)
 
 Custom Laravel 5 anti-virus validator for file uploads.
 
@@ -60,6 +60,8 @@ $rules = array(
 2014.12.05 - Removed the dependency php-clamav, Now using [Quahog](https://github.com/jonjomckay/quahog)
 
 2015.10.20 - Updated for Laravel 5
+
+2015.11.20 - Updated to use PSR-4
 
 <a name="author"></a>
 ## Author
