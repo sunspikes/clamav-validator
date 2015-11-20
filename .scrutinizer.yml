@@ -1,5 +1,6 @@
-php:
-    code_rating: true
+checks:
+    php:
+        code_rating: true
 
 filter:
     paths:
