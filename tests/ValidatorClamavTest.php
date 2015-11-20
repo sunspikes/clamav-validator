@@ -1,8 +1,11 @@
 <?php
 
+namespace Sunspikes\Tests\ClamavValidator;
+
+use Mockery;
 use Sunspikes\ClamavValidator\ClamavValidator;
 
-class ValidatorClamavTest extends PHPUnit_Framework_TestCase
+class ValidatorClamavTest extends \PHPUnit_Framework_TestCase
 {
     protected $translator;
     protected $clean_data;
@@ -10,10 +13,9 @@ class ValidatorClamavTest extends PHPUnit_Framework_TestCase
     protected $rules;
     protected $messages;
 
-
     public function setUp()
     {
-        $this->translator = Mockery::mock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = Mockery::mock('\Symfony\Component\Translation\TranslatorInterface');
         $this->translator->shouldReceive('trans');
         $this->clean_data = array(
             'file' => dirname(__FILE__) . '/files/test1.txt'
@@ -24,16 +26,17 @@ class ValidatorClamavTest extends PHPUnit_Framework_TestCase
         $this->messages = array();
     }
 
-
     public function tearDown()
     {
         Mockery::close();
     }
 
-
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage AF_INET
+     */
     public function testValidatesClean()
     {
-
         $validator = new ClamavValidator(
             $this->translator,
             $this->clean_data,
@@ -44,9 +47,12 @@ class ValidatorClamavTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($validator->passes());
     }
 
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage AF_INET
+     */
     public function testValidatesVirus()
     {
-
         $validator = new ClamavValidator(
             $this->translator,
             $this->virus_data,
