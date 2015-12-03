@@ -31,10 +31,6 @@ class ValidatorClamavTest extends \PHPUnit_Framework_TestCase
         Mockery::close();
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage AF_INET
-     */
     public function testValidatesClean()
     {
         $validator = new ClamavValidator(
@@ -47,10 +43,6 @@ class ValidatorClamavTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($validator->passes());
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage AF_INET
-     */
     public function testValidatesVirus()
     {
         $validator = new ClamavValidator(

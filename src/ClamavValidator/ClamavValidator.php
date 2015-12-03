@@ -1,6 +1,8 @@
 <?php namespace Sunspikes\ClamavValidator;
 
 use Illuminate\Validation\Validator;
+use Quahog\Client;
+use Socket\Raw\Factory;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ClamavValidator extends Validator
@@ -13,7 +15,12 @@ class ClamavValidator extends Validator
     /**
      * @const string CLAMAV_UNIX_SOCKET
      */
-    const CLAMAV_UNIX_SOCKET = 'unix:///var/run/clamav/clamd.ctl';
+    const CLAMAV_UNIX_SOCKET = '/var/run/clamav/clamd.ctl';
+
+    /**
+     * @const string CLAMAV_LOCAL_TCP_SOCKET
+     */
+    const CLAMAV_LOCAL_TCP_SOCKET = 'tcp://127.0.0.1:3310';
 
     /**
      * Creates a new instance of ClamavValidator
@@ -34,12 +41,13 @@ class ClamavValidator extends Validator
     public function validateClamav($attribute, $value, $parameters)
     {
         $file = $this->getFilePath($value);
+        $clamavSocket = $this->getClamavSocket();
 
         // Create a new socket instance
-        $socket = (new \Socket\Raw\Factory())->createClient(self::CLAMAV_UNIX_SOCKET);
+        $socket = (new Factory())->createClient($clamavSocket);
 
         // Create a new instance of the Client
-        $quahog = new \Quahog\Client($socket);
+        $quahog = new Client($socket);
 
         // Scan the file
         $result = $quahog->scanFile($file);
@@ -50,6 +58,20 @@ class ClamavValidator extends Validator
         }
 
         return true;
+    }
+
+    /**
+     * Guess the ClamAV socket
+     *
+     * @return string
+     */
+    protected function getClamavSocket()
+    {
+        if (file_exists(self::CLAMAV_UNIX_SOCKET)) {
+            return 'unix://' . self::CLAMAV_UNIX_SOCKET;
+        }
+
+        return self::CLAMAV_LOCAL_TCP_SOCKET;
     }
 
     /**
