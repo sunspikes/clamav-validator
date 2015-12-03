@@ -8,6 +8,7 @@ php:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install clamav-daemon -qq
+  - sudo freshclam
   - sudo service clamav-daemon start
 
 before_script:
