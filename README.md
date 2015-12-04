@@ -9,10 +9,34 @@
 
 Custom Laravel 5 anti-virus validator for file uploads.
 
+* [Requirements](#requirements)
 * [Installation](#installation)
 * [Usage](#usage)
 * [Change Log](#changelog)
 * [Author](#author)
+
+<a name="requirements"></a> 
+## Requirements
+
+You must have ClamAV anti-virus scanner running on the server to make this package work.
+
+You can see the ClamAV installation instructions on the official [ClamAV documentation](http://www.clamav.net/documents/installing-clamav).
+
+For example on an Ubuntu machine, you can do:
+
+```sh
+# Install clamav virus scanner
+sudo apt-get update
+sudo apt-get install clamav-daemon
+
+# Update virus definitions
+sudo freshclam
+
+# Start the scanner service
+sudo service clamav-daemon start
+```
+
+This package is not tested on windows, but if you have ClamAV running (usually on port 3310) it should work.
 
 <a name="installation"></a>
 ## Installation
@@ -44,7 +68,6 @@ Add the following to your `providers` array in `app/config/app.php`:
 ),
 ```
 
-
 <a name="usage"></a>
 ## Usage
 
@@ -56,7 +79,6 @@ $rules = array(
 );
 ```
 
-
 <a name="changelog"></a>
 ## Change Log
 
@@ -67,6 +89,8 @@ $rules = array(
 2015.10.20 - Updated for Laravel 5
 
 2015.11.20 - Updated to use PSR-4
+
+2015.12.03 - Added limited windows support
 
 <a name="author"></a>
 ## Author
