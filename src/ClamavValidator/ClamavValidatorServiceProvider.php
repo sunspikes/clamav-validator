@@ -28,7 +28,7 @@ class ClamavValidatorServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->package('sunspikes/clamav-validator', 'clamav-validator');
+        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'clamav-validator');
 
         $this->app['validator']
             ->resolver(function ($translator, $data, $rules, $messages) {

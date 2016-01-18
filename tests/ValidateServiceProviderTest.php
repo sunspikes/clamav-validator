@@ -13,6 +13,7 @@ class ValidateServiceProviderTest extends \PHPUnit_Framework_TestCase
     {
         $translator = Mockery::mock('\Symfony\Component\Translation\TranslatorInterface');
         $translator->shouldReceive('get');
+        $translator->shouldReceive('addNamespace');
 
         $presence = Mockery::mock('\Illuminate\Validation\PresenceVerifierInterface');
 
@@ -21,11 +22,11 @@ class ValidateServiceProviderTest extends \PHPUnit_Framework_TestCase
 
         $container = Mockery::mock('\Illuminate\Container\Container');
         $container->shouldReceive('bind');
+        $container->shouldReceive('loadTranslationsFrom');
         $container->shouldReceive('offsetGet')->with('translator')->andReturn($translator);
         $container->shouldReceive('offsetGet')->with('validator')->andReturn($factory);
 
         $sp = Mockery::mock('\Sunspikes\ClamavValidator\ClamavValidatorServiceProvider[package]', array($container));
-        $sp->shouldReceive('package');
         $sp->boot();
 
         $validator = $factory->make(array(), array());

@@ -43,28 +43,15 @@ This package is not tested on windows, but if you have ClamAV running (usually o
 
 Install the package through [Composer](http://getcomposer.org).
 
-In your `composer.json` file:
+Run `composer require sunspikes/clamav-validator`
 
-```json
-{
-	"require": {
-		"laravel/framework": ">=4.1.21",
-		"sunspikes/clamav-validator": "dev-master"
-	}
-}
-```
-
-**Note:** the minimum version of Laravel that's supported is 4.1.21. 
-
-Run `composer install` or `composer update` to install the package.
-
-Add the following to your `providers` array in `app/config/app.php`:
+Add the following to your `providers` array in `config/app.php`:
 
 ```php
 'providers' => array(
 	// ...
 
-	'Sunpikes\ClamavValidator\ClamavValidatorServiceProvider',
+	Sunspikes\ClamavValidator\ClamavValidatorServiceProvider::class,
 ),
 ```
 
