@@ -4,12 +4,14 @@ namespace Sunspikes\Tests\ClamavValidator;
 
 use Mockery;
 use Sunspikes\ClamavValidator\ClamavValidator;
+use Sunspikes\ClamavValidator\ClamavValidatorException;
 
 class ValidatorClamavTest extends \PHPUnit_Framework_TestCase
 {
     protected $translator;
     protected $clean_data;
     protected $virus_data;
+    protected $error_data;
     protected $rules;
     protected $messages;
 
@@ -23,11 +25,15 @@ class ValidatorClamavTest extends \PHPUnit_Framework_TestCase
         $this->virus_data = array(
             'file' => dirname(__FILE__) . '/files/test2.txt'
         );
+        $this->error_data = array(
+            'file' => dirname(__FILE__) . '/files/test3.txt'
+        );
         $this->messages = array();
     }
 
     public function tearDown()
     {
+        chmod($this->error_data['file'], 0644);
         Mockery::close();
     }
 
@@ -53,5 +59,21 @@ class ValidatorClamavTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertFalse($validator->passes());
+    }
+
+    public function testValidatesError()
+    {
+        $validator = new ClamavValidator(
+            $this->translator,
+            $this->error_data,
+            array('file' => 'clamav'),
+            $this->messages
+        );
+
+        chmod($this->error_data['file'], 0000);
+
+        $this->setExpectedException('\Sunspikes\ClamavValidator\ClamavValidatorException', 'Access denied.');
+
+        $validator->passes();
     }
 }
