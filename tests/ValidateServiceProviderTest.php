@@ -11,7 +11,7 @@ class ValidateServiceProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testBoot()
     {
-        $translator = Mockery::mock('\Symfony\Component\Translation\TranslatorInterface');
+        $translator = Mockery::mock('\Illuminate\Contracts\Translation\Translator');
         $translator->shouldReceive('get');
         $translator->shouldReceive('addNamespace');
 

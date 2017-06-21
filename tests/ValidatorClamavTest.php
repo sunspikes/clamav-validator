@@ -17,7 +17,7 @@ class ValidatorClamavTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->translator = Mockery::mock('\Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = Mockery::mock('\Illuminate\Contracts\Translation\Translator');
         $this->translator->shouldReceive('trans');
         $this->clean_data = array(
             'file' => dirname(__FILE__) . '/files/test1.txt'
