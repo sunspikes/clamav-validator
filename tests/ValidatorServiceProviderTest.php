@@ -37,8 +37,6 @@ class ValidatorServiceProviderTest extends \PHPUnit_Framework_TestCase
 
         foreach ($validator->extensions as $rule => $class_and_method) {
 
-            $class_and_method = "\\" . $class_and_method;
-
             $this->assertTrue(in_array($rule, $sp->getRules()));
             $this->assertEquals(ClamavValidator::class .'@validate' . studly_case($rule), $class_and_method);
 

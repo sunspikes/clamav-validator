@@ -28,6 +28,11 @@ class ClamavValidator extends Validator
     const CLAMAV_LOCAL_TCP_SOCKET = 'tcp://127.0.0.1:3310';
 
     /**
+     * @const string CLAMAV_SOCKET_READ_TIMEOUT
+     */
+    const CLAMAV_SOCKET_READ_TIMEOUT = 30;
+
+    /**
      * Creates a new instance of ClamavValidator
      */
     public function __construct($translator, $data, $rules, $messages)
@@ -54,7 +59,7 @@ class ClamavValidator extends Validator
         $socket = (new Factory())->createClient($clamavSocket);
 
         // Create a new instance of the Client
-        $quahog = new Client($socket);
+        $quahog = new Client($socket, self::CLAMAV_SOCKET_READ_TIMEOUT, PHP_NORMAL_READ);
 
         // Scan the file
         $result = $quahog->scanFile($file);
