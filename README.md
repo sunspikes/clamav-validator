@@ -12,7 +12,6 @@ Custom Laravel 5 anti-virus validator for file uploads.
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [Usage](#usage)
-* [Change Log](#changelog)
 * [Author](#author)
 
 <a name="requirements"></a> 
@@ -65,19 +64,6 @@ $rules = array(
 	'my_file_field' => 'clamav',
 );
 ```
-
-<a name="changelog"></a>
-## Change Log
-
-2014.12.05 - Initial version, using extension php-clamav
-
-2014.12.05 - Removed the dependency php-clamav, Now using [Quahog](https://github.com/jonjomckay/quahog)
-
-2015.10.20 - Updated for Laravel 5
-
-2015.11.20 - Updated to use PSR-4
-
-2015.12.03 - Added limited windows support
 
 <a name="author"></a>
 ## Author
