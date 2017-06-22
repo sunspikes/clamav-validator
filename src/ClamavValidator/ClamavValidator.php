@@ -1,7 +1,7 @@
 <?php namespace Sunspikes\ClamavValidator;
 
 use Illuminate\Validation\Validator;
-use Quahog\Client;
+use Xenolope\Quahog\Client;
 use Socket\Raw\Factory;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -28,6 +28,11 @@ class ClamavValidator extends Validator
     const CLAMAV_LOCAL_TCP_SOCKET = 'tcp://127.0.0.1:3310';
 
     /**
+     * @const string CLAMAV_SOCKET_READ_TIMEOUT
+     */
+    const CLAMAV_SOCKET_READ_TIMEOUT = 30;
+
+    /**
      * Creates a new instance of ClamavValidator
      */
     public function __construct($translator, $data, $rules, $messages)
@@ -38,10 +43,12 @@ class ClamavValidator extends Validator
     /**
      * Validate the uploaded file for virus/malware with ClamAV
      *
-     * @param  $attribute  string
+     * @param  $attribute   string
      * @param  $value       mixed
-     * @param  $parameters array
+     * @param  $parameters  array
+     *
      * @return boolean
+     * @throws ClamavValidatorException
      */
     public function validateClamav($attribute, $value, $parameters)
     {
@@ -52,7 +59,7 @@ class ClamavValidator extends Validator
         $socket = (new Factory())->createClient($clamavSocket);
 
         // Create a new instance of the Client
-        $quahog = new Client($socket);
+        $quahog = new Client($socket, self::CLAMAV_SOCKET_READ_TIMEOUT, PHP_NORMAL_READ);
 
         // Scan the file
         $result = $quahog->scanFile($file);
@@ -62,11 +69,7 @@ class ClamavValidator extends Validator
         }
 
         // Check if scan result is not clean
-        if (self::CLAMAV_STATUS_OK != $result['status']) {
-            return false;
-        }
-
-        return true;
+        return !(self::CLAMAV_STATUS_OK !== $result['status']);
     }
 
     /**
