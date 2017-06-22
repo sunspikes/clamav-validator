@@ -6,9 +6,8 @@ use Mockery;
 use Illuminate\Validation\Factory;
 use Illuminate\Support\Str;
 
-class ValidateServiceProviderTest extends \PHPUnit_Framework_TestCase
+class ValidatorServiceProviderTest extends \PHPUnit_Framework_TestCase
 {
-
     public function testBoot()
     {
         $translator = Mockery::mock('\Illuminate\Contracts\Translation\Translator');
@@ -26,12 +25,12 @@ class ValidateServiceProviderTest extends \PHPUnit_Framework_TestCase
         $container->shouldReceive('offsetGet')->with('translator')->andReturn($translator);
         $container->shouldReceive('offsetGet')->with('validator')->andReturn($factory);
 
-        $sp = Mockery::mock('\Sunspikes\ClamavValidator\ClamavValidatorServiceProvider[package]', array($container));
+        $sp = Mockery::mock('\Sunspikes\ClamavValidator\ClamavValidatorServiceProvider[package]', [$container]);
         $sp->boot();
 
-        $validator = $factory->make(array(), array());
+        $validator = $factory->make([], []);
 
-        foreach ($validator->getExtensions() as $rule => $class_and_method) {
+        foreach ($validator->extensions as $rule => $class_and_method) {
 
             $class_and_method = "\\" . $class_and_method;
 
@@ -48,5 +47,4 @@ class ValidateServiceProviderTest extends \PHPUnit_Framework_TestCase
     {
         Mockery::close();
     }
-
 }

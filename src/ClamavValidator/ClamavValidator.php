@@ -38,10 +38,12 @@ class ClamavValidator extends Validator
     /**
      * Validate the uploaded file for virus/malware with ClamAV
      *
-     * @param  $attribute  string
+     * @param  $attribute   string
      * @param  $value       mixed
-     * @param  $parameters array
+     * @param  $parameters  array
+     *
      * @return boolean
+     * @throws ClamavValidatorException
      */
     public function validateClamav($attribute, $value, $parameters)
     {
@@ -62,11 +64,7 @@ class ClamavValidator extends Validator
         }
 
         // Check if scan result is not clean
-        if (self::CLAMAV_STATUS_OK != $result['status']) {
-            return false;
-        }
-
-        return true;
+        return !(self::CLAMAV_STATUS_OK !== $result['status']);
     }
 
     /**

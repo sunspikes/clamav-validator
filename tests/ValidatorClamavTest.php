@@ -2,6 +2,7 @@
 
 namespace Sunspikes\Tests\ClamavValidator;
 
+use Illuminate\Contracts\Translation\Translator;
 use Mockery;
 use Sunspikes\ClamavValidator\ClamavValidator;
 use Sunspikes\ClamavValidator\ClamavValidatorException;
@@ -17,18 +18,18 @@ class ValidatorClamavTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->translator = Mockery::mock('\Illuminate\Contracts\Translation\Translator');
+        $this->translator = Mockery::mock(Translator::class);
         $this->translator->shouldReceive('trans');
-        $this->clean_data = array(
+        $this->clean_data = [
             'file' => dirname(__FILE__) . '/files/test1.txt'
-        );
-        $this->virus_data = array(
+        ];
+        $this->virus_data = [
             'file' => dirname(__FILE__) . '/files/test2.txt'
-        );
-        $this->error_data = array(
+        ];
+        $this->error_data = [
             'file' => dirname(__FILE__) . '/files/test3.txt'
-        );
-        $this->messages = array();
+        ];
+        $this->messages = [];
     }
 
     public function tearDown()
@@ -42,7 +43,7 @@ class ValidatorClamavTest extends \PHPUnit_Framework_TestCase
         $validator = new ClamavValidator(
             $this->translator,
             $this->clean_data,
-            array('file' => 'clamav'),
+            ['file' => 'clamav'],
             $this->messages
         );
 
@@ -54,7 +55,7 @@ class ValidatorClamavTest extends \PHPUnit_Framework_TestCase
         $validator = new ClamavValidator(
             $this->translator,
             $this->virus_data,
-            array('file' => 'clamav'),
+            ['file' => 'clamav'],
             $this->messages
         );
 
@@ -66,13 +67,13 @@ class ValidatorClamavTest extends \PHPUnit_Framework_TestCase
         $validator = new ClamavValidator(
             $this->translator,
             $this->error_data,
-            array('file' => 'clamav'),
+            ['file' => 'clamav'],
             $this->messages
         );
 
         chmod($this->error_data['file'], 0000);
 
-        $this->setExpectedException('\Sunspikes\ClamavValidator\ClamavValidatorException', 'Access denied.');
+        $this->setExpectedException(ClamavValidatorException::class, 'Access denied.');
 
         $validator->passes();
     }
