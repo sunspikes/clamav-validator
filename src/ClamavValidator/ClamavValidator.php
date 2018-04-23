@@ -79,11 +79,11 @@ class ClamavValidator extends Validator
      */
     protected function getClamavSocket()
     {
-        if (file_exists(self::CLAMAV_UNIX_SOCKET)) {
-            return 'unix://' . self::CLAMAV_UNIX_SOCKET;
+        if (file_exists(env('CLAMAV_UNIX_SOCKET', self::CLAMAV_UNIX_SOCKET))) {
+            return 'unix://' . env('CLAMAV_UNIX_SOCKET', self::CLAMAV_UNIX_SOCKET);
         }
 
-        return self::CLAMAV_LOCAL_TCP_SOCKET;
+        return env('CLAMAV_TCP_SOCKET', self::CLAMAV_LOCAL_TCP_SOCKET);
     }
 
     /**
