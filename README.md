@@ -12,6 +12,7 @@ Custom Laravel 5 anti-virus validator for file uploads.
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [Usage](#usage)
+* [Configuration](#configuration)
 * [Author](#author)
 
 <a name="requirements"></a> 
@@ -64,6 +65,13 @@ $rules = array(
 	'my_file_field' => 'clamav',
 );
 ```
+
+<a name="configuration"></a>
+## Configuration
+
+By default the package will try to connect the clamav daemon via the default socket file (/var/run/clamav/clamd.ctl) and if it fails it will try the tcp port (127.0.0.1:3310)
+
+But you can set the `CLAMAV_UNIX_SOCKET` (socket file path) or `CLAMAV_LOCAL_TCP_SOCKET` (host:port) environment variables to override this.
 
 <a name="author"></a>
 ## Author
