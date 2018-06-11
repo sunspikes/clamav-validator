@@ -35,9 +35,14 @@ class ClamavValidator extends Validator
     /**
      * Creates a new instance of ClamavValidator
      */
-    public function __construct($translator, $data, $rules, $messages)
-    {
-        parent::__construct($translator, $data, $rules, $messages);
+    public function __construct(
+        Translator $translator,
+        array $data,
+        array $rules,
+        array $messages = [],
+        array $customAttributes = []
+    ) {
+        parent::__construct($translator, $data, $rules, $messages, $customAttributes);
     }
 
     /**

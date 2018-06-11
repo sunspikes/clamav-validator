@@ -31,12 +31,13 @@ class ClamavValidatorServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__ . '/../lang', 'clamav-validator');
 
         $this->app['validator']
-            ->resolver(function ($translator, $data, $rules, $messages) {
+            ->resolver(function ($translator, $data, $rules, $messages, $attributes) {
                 return new ClamavValidator(
                     $translator,
                     $data,
                     $rules,
-                    $messages
+                    $messages,
+                    $attributes
                 );
             });
 
