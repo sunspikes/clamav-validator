@@ -62,7 +62,7 @@ class ClamavValidator extends Validator
         $quahog = new Client($socket, self::CLAMAV_SOCKET_READ_TIMEOUT, PHP_NORMAL_READ);
 
         // Scan the file
-        $result = $quahog->scanFile($file);
+        $result = $quahog->scanLocalFile($file);
 
         if (self::CLAMAV_STATUS_ERROR === $result['status']) {
             throw new ClamavValidatorException($result['reason']);
