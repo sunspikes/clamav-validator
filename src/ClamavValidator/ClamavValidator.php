@@ -61,8 +61,13 @@ class ClamavValidator extends Validator
         // Create a new instance of the Client
         $quahog = new Client($socket, self::CLAMAV_SOCKET_READ_TIMEOUT, PHP_NORMAL_READ);
 
+        // Check if the file is readable
+        if (! is_readable($file)) {
+            throw new ClamavValidatorException(sprintf('The file "%s" is not readable', $file));
+        }
+
         // Scan the file
-        $result = $quahog->scanFile($file);
+        $result = $quahog->scanResourceStream(fopen($file, 'rb'));
 
         if (self::CLAMAV_STATUS_ERROR === $result['status']) {
             throw new ClamavValidatorException($result['reason']);
