@@ -64,6 +64,8 @@ class ValidatorClamavTest extends \PHPUnit_Framework_TestCase
 
     public function testValidatesError()
     {
+        $this->setExpectedException(ClamavValidatorException::class, 'is not readable');
+
         $validator = new ClamavValidator(
             $this->translator,
             $this->error_data,
@@ -72,8 +74,6 @@ class ValidatorClamavTest extends \PHPUnit_Framework_TestCase
         );
 
         chmod($this->error_data['file'], 0000);
-
-        $this->setExpectedException(ClamavValidatorException::class, 'Access denied.');
 
         $validator->passes();
     }
