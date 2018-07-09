@@ -1,5 +1,6 @@
 <?php namespace Sunspikes\ClamavValidator;
 
+use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Validation\Validator;
 use Xenolope\Quahog\Client;
 use Socket\Raw\Factory;
@@ -33,11 +34,23 @@ class ClamavValidator extends Validator
     const CLAMAV_SOCKET_READ_TIMEOUT = 30;
 
     /**
-     * Creates a new instance of ClamavValidator
+     * Creates a new instance of ClamavValidator]
+     *
+     * ClamavValidator constructor.
+     * @param Translator $translator
+     * @param array      $data
+     * @param array      $rules
+     * @param array      $messages
+     * @param array      $customAttributes
      */
-    public function __construct($translator, $data, $rules, $messages)
-    {
-        parent::__construct($translator, $data, $rules, $messages);
+    public function __construct(
+        Translator $translator,
+        array $data,
+        array $rules,
+        array $messages = [],
+        array $customAttributes = []
+    ) {
+        parent::__construct($translator, $data, $rules, $messages, $customAttributes);
     }
 
     /**
