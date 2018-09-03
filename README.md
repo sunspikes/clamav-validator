@@ -41,14 +41,15 @@ This package is not tested on windows, but if you have ClamAV running (usually o
 <a name="installation"></a>
 ## Installation
 
-Install the package through [Composer](http://getcomposer.org).
+#### 1. Install the package through [Composer](http://getcomposer.org).*
+
 Require the `sunspikes/clamav-validator` package in your `composer.json` and update your dependencies:
    
    ```bash
    $ composer require sunspikes/clamav-validator
    ```
 
-Add the service provider (for Laravel 5.4 or below)
+#### 2. Add the service provider (for Laravel 5.4 or below)
 
 This package supports Laravel new [Package Discovery](https://laravel.com/docs/5.5/packages#package-discovery).
     
