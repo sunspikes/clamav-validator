@@ -42,8 +42,6 @@ This package is not tested on windows, but if you have ClamAV running (usually o
 ## Installation
 
 #### 1. Install the package through [Composer](http://getcomposer.org).
-
-Require the `sunspikes/clamav-validator` package in your `composer.json` and update your dependencies:
    
    ```bash
    $ composer require sunspikes/clamav-validator
