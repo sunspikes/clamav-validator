@@ -1,6 +1,7 @@
 <?php namespace Sunspikes\ClamavValidator;
 
 use Illuminate\Contracts\Translation\Translator;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Validation\Validator;
 use Xenolope\Quahog\Client;
 use Socket\Raw\Factory;
@@ -17,21 +18,6 @@ class ClamavValidator extends Validator
      * @const string CLAMAV_STATUS_ERROR
      */
     const CLAMAV_STATUS_ERROR = 'ERROR';
-
-    /**
-     * @const string CLAMAV_UNIX_SOCKET
-     */
-    const CLAMAV_UNIX_SOCKET = '/var/run/clamav/clamd.ctl';
-
-    /**
-     * @const string CLAMAV_LOCAL_TCP_SOCKET
-     */
-    const CLAMAV_LOCAL_TCP_SOCKET = 'tcp://127.0.0.1:3310';
-
-    /**
-     * @const string CLAMAV_SOCKET_READ_TIMEOUT
-     */
-    const CLAMAV_SOCKET_READ_TIMEOUT = 30;
 
     /**
      * Creates a new instance of ClamavValidator]
@@ -72,7 +58,7 @@ class ClamavValidator extends Validator
         $socket = (new Factory())->createClient($clamavSocket);
 
         // Create a new instance of the Client
-        $quahog = new Client($socket, self::CLAMAV_SOCKET_READ_TIMEOUT, PHP_NORMAL_READ);
+        $quahog = new Client($socket, Config::get('clamav.socket_read_timeout'), PHP_NORMAL_READ);
 
         // Check if the file is readable
         if (! is_readable($file)) {
@@ -97,11 +83,16 @@ class ClamavValidator extends Validator
      */
     protected function getClamavSocket()
     {
-        if (file_exists(env('CLAMAV_UNIX_SOCKET', self::CLAMAV_UNIX_SOCKET))) {
-            return 'unix://' . env('CLAMAV_UNIX_SOCKET', self::CLAMAV_UNIX_SOCKET);
-        }
+        $preferredSocket = Config::get('clamav.preferred_socket');
 
-        return env('CLAMAV_TCP_SOCKET', self::CLAMAV_LOCAL_TCP_SOCKET);
+        if ($preferredSocket === 'unix_socket') {
+            $unixSocket = Config::get('clamav.unix_socket');
+            if (file_exists($unixSocket)) {
+                return 'unix://' . $unixSocket;
+            }
+        }
+        // We use the tcp_socket as fallback as well
+        return Config::get('clamav.tcp_socket');
     }
 
     /**
