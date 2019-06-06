@@ -87,7 +87,7 @@ class ClamavValidator extends Validator
         }
 
         // Check if scan result is not clean
-        return !(self::CLAMAV_STATUS_OK !== $result['status']);
+        return self::CLAMAV_STATUS_OK === $result['status'];
     }
 
     /**
