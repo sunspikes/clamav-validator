@@ -9,16 +9,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class ClamavValidator extends Validator
 {
     /**
-     * @const string CLAMAV_STATUS_OK
-     */
-    const CLAMAV_STATUS_OK = 'OK';
-
-    /**
-     * @const string CLAMAV_STATUS_ERROR
-     */
-    const CLAMAV_STATUS_ERROR = 'ERROR';
-
-    /**
      * @const string CLAMAV_UNIX_SOCKET
      */
     const CLAMAV_UNIX_SOCKET = '/var/run/clamav/clamd.ctl';
@@ -82,12 +72,12 @@ class ClamavValidator extends Validator
         // Scan the file
         $result = $quahog->scanResourceStream(fopen($file, 'rb'));
 
-        if (self::CLAMAV_STATUS_ERROR === $result['status']) {
+        if (Client::RESULT_ERROR === $result['status']) {
             throw new ClamavValidatorException($result['reason']);
         }
 
         // Check if scan result is not clean
-        return self::CLAMAV_STATUS_OK === $result['status'];
+        return Client::RESULT_OK === $result['status'];
     }
 
     /**
