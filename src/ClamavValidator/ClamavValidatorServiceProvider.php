@@ -30,24 +30,26 @@ class ClamavValidatorServiceProvider extends ServiceProvider
     {
         $this->loadTranslationsFrom(__DIR__ . '/../lang', 'clamav-validator');
 
-        $this->publishes([
-            __DIR__ . '/../../config/clamav.php' => config_path('clamav.php'),
-        ], 'config');
-        $this->publishes([
-        __DIR__.'/../lang' => resource_path('lang/vendor/clamav-validator'),
-        ], 'lang');
-        $this->app['validator']
-            ->resolver(function ($translator, $data, $rules, $messages, $customAttributes = []) {
-                return new ClamavValidator(
-                    $translator,
-                    $data,
-                    $rules,
-                    $messages,
-                    $customAttributes
-                );
-            });
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/../../config/clamav.php' => config_path('clamav.php'),
+            ], 'config');
+            $this->publishes([
+            __DIR__.'/../lang' => resource_path('lang/vendor/clamav-validator'),
+            ], 'lang');
+            $this->app['validator']
+                ->resolver(function ($translator, $data, $rules, $messages, $customAttributes = []) {
+                    return new ClamavValidator(
+                        $translator,
+                        $data,
+                        $rules,
+                        $messages,
+                        $customAttributes
+                    );
+                });
 
-        $this->addNewRules();
+            $this->addNewRules();
+        }
     }
 
     /**
