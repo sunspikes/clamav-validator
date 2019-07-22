@@ -10,17 +10,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class ClamavValidator extends Validator
 {
     /**
-     * @const string CLAMAV_STATUS_OK
-     */
-    const CLAMAV_STATUS_OK = 'OK';
-
-    /**
-     * @const string CLAMAV_STATUS_ERROR
-     */
-    const CLAMAV_STATUS_ERROR = 'ERROR';
-
-    /**
-     * Creates a new instance of ClamavValidator]
+     * Creates a new instance of ClamavValidator
      *
      * ClamavValidator constructor.
      * @param Translator $translator
