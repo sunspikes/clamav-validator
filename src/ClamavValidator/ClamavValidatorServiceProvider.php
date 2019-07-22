@@ -32,10 +32,10 @@ class ClamavValidatorServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../../config/clamav.php' => config_path('clamav.php'),
+                __DIR__ . '/../../config/clamav.php' => $this->app->configPath('clamav.php'),
             ], 'config');
             $this->publishes([
-            __DIR__.'/../lang' => resource_path('lang/vendor/clamav-validator'),
+            __DIR__.'/../lang' => $this->app->resourcePath('lang/vendor/clamav-validator'),
             ], 'lang');
             $this->app['validator']
                 ->resolver(function ($translator, $data, $rules, $messages, $customAttributes = []) {

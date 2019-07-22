@@ -4,14 +4,17 @@ namespace Sunspikes\Tests\ClamavValidator;
 
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Translation\Translator;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Facade;
 use Illuminate\Validation\PresenceVerifierInterface;
 use Mockery;
 use Illuminate\Validation\Factory;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\TestCase;
 use Sunspikes\ClamavValidator\ClamavValidator;
 use Sunspikes\ClamavValidator\ClamavValidatorServiceProvider;
 
-class ValidatorServiceProviderTest extends \PHPUnit_Framework_TestCase
+class ClamavValidatorServiceProviderTest extends TestCase
 {
     public function testBoot()
     {
@@ -24,13 +27,21 @@ class ValidatorServiceProviderTest extends \PHPUnit_Framework_TestCase
         $factory = new Factory($translator);
         $factory->setPresenceVerifier($presence);
 
+        $config = Config::spy();
+
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('bind');
         $container->shouldReceive('loadTranslationsFrom');
         $container->shouldReceive('offsetGet')->with('translator')->andReturn($translator);
         $container->shouldReceive('offsetGet')->with('validator')->andReturn($factory);
+        $container->shouldReceive('offsetGet')->with('config')->andReturn($config);
+        $container->shouldReceive('runningInConsole')->andReturn(true);
+        $container->shouldReceive('configPath');
+        $container->shouldReceive('resourcePath');
 
-        $sp = Mockery::mock(ClamavValidatorServiceProvider::class .'[package]', [$container]);
+        Facade::setFacadeApplication($container);
+
+        $sp = new ClamavValidatorServiceProvider($container);
         $sp->boot();
 
         $validator = $factory->make([], []);
