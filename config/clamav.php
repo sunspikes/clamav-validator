@@ -29,6 +29,7 @@ return [
     | This option defines the TCP socket to the ClamAV instance.
     */
     'tcp_socket' => env('CLAMAV_TCP_SOCKET', 'tcp://127.0.0.1:3310'),
+
     /*
     |--------------------------------------------------------------------------
     | Socket read timeout
