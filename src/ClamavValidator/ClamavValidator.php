@@ -68,12 +68,12 @@ class ClamavValidator extends Validator
         // Scan the file
         $result = $quahog->scanResourceStream(fopen($file, 'rb'));
 
-        if (self::CLAMAV_STATUS_ERROR === $result['status']) {
+        if (Client::RESULT_ERROR === $result['status']) {
             throw new ClamavValidatorException($result['reason']);
         }
 
         // Check if scan result is not clean
-        return !(self::CLAMAV_STATUS_OK !== $result['status']);
+        return Client::RESULT_OK === $result['status'];
     }
 
     /**

@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=5.5.0",
         "xenolope/quahog": "2.*",
         "illuminate/support": "^5.0",
         "illuminate/validation": "^5.0"
