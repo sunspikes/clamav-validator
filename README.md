@@ -12,7 +12,6 @@ Custom Laravel 5 anti-virus validator for file uploads.
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [Usage](#usage)
-* [Configuration](#configuration)
 * [Author](#author)
 
 <a name="requirements"></a> 
@@ -91,16 +90,9 @@ $rules = [
 ];
 ```
 
-<a name="configuration"></a>
-## Configuration
-
-By default the package will try to connect the clamav daemon via the default socket file (/var/run/clamav/clamd.ctl) and if it fails it will try the tcp port (127.0.0.1:3310)
-
-Please see the config file `config/clamav.php` to customize this.
-
 <a name="author"></a>
 ## Author
 
-Krishnaprasad MG [@sunspikes]
+Krishnaprasad MG [@sunspikes] and other [awesome contributors](https://github.com/sunspikes/clamav-validator/graphs/contributors)
 
 _Contact me at [sunspikes at gmail dot com]_
