@@ -54,12 +54,31 @@ This package supports Laravel new [Package Discovery](https://laravel.com/docs/5
 If you are using Laravel < 5.5, you need to add `Sunspikes\ClamavValidator\ClamavValidatorServiceProvider::class` to your `providers` array in `config/app.php`:
 
 ```php
-'providers' => array(
+'providers' => [
 	// ...
 
 	Sunspikes\ClamavValidator\ClamavValidatorServiceProvider::class,
-),
+],
 ```
+#### 3. Publish assets from the the vendor package
+
+##### Config file
+
+The default configuration file does use `ENV` to override the defaults. If you want to change the configuration file 
+anyway you run the following command to publish the package config file:
+
+    php artisan vendor:publish --provider="Sunspikes\ClamavValidator\ClamavValidatorServiceProvider" --tag=config
+
+Once the command is finished you should have a `config/clamav.php` file that will be used as well.
+
+##### Language files
+
+If you want to customize the translation or add your own language you can run the the following command to
+publish the language files to a folder you maintain:
+
+    php artisan vendor:publish --provider="Sunspikes\ClamavValidator\ClamavValidatorServiceProvider" --tag=lang
+
+This will copy the language files to `resources/lang/vendor/clamav-validator` for Laravel >= 5.1
 
 <a name="usage"></a>
 ## Usage
@@ -67,9 +86,9 @@ If you are using Laravel < 5.5, you need to add `Sunspikes\ClamavValidator\Clama
 Use it like any `Validator` rule:
 
 ```php
-$rules = array(
-	'my_file_field' => 'clamav',
-);
+$rules = [
+    'my_file_field' => 'clamav',
+];
 ```
 
 <a name="configuration"></a>

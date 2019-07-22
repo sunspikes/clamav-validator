@@ -2,12 +2,15 @@
 
 namespace Sunspikes\Tests\ClamavValidator;
 
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Facade;
 use Mockery;
 use Illuminate\Contracts\Translation\Translator;
 use Sunspikes\ClamavValidator\ClamavValidator;
 use Sunspikes\ClamavValidator\ClamavValidatorException;
 
-class ValidatorClamavTest extends \PHPUnit_Framework_TestCase
+class ClamavValidatorTest extends \PHPUnit_Framework_TestCase
 {
     protected $translator;
     protected $clean_data;
@@ -30,6 +33,15 @@ class ValidatorClamavTest extends \PHPUnit_Framework_TestCase
             'file' => $this->getTempPath(__DIR__ . '/files/test3.txt')
         ];
         $this->messages = [];
+
+        $config = new Config();
+        $config->shouldReceive('get')->with('clamav.preferred_socket')->andReturn('unix_socket');
+        $config->shouldReceive('get')->with('clamav.unix_socket')->andReturn('/var/run/clamav/clamd.ctl');
+        $config->shouldReceive('get')->with('clamav.tcp_socket')->andReturn('tcp://127.0.0.1:3310');
+        $config->shouldReceive('get')->with('clamav.socket_read_timeout')->andReturn(30);
+
+        $application = Mockery::mock(Application::class, ['make' => $config]);
+        Facade::setFacadeApplication($application);
     }
 
     public function tearDown()

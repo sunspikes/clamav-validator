@@ -15,7 +15,7 @@ class ClamavValidatorServiceProvider extends ServiceProvider
     /**
      * The list of validator rules.
      *
-     * @var bool
+     * @var array
      */
     protected $rules = [
         'clamav',
@@ -30,18 +30,26 @@ class ClamavValidatorServiceProvider extends ServiceProvider
     {
         $this->loadTranslationsFrom(__DIR__ . '/../lang', 'clamav-validator');
 
-        $this->app['validator']
-            ->resolver(function ($translator, $data, $rules, $messages, $customAttributes = []) {
-                return new ClamavValidator(
-                    $translator,
-                    $data,
-                    $rules,
-                    $messages,
-                    $customAttributes
-                );
-            });
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/../../config/clamav.php' => $this->app->configPath('clamav.php'),
+            ], 'config');
+            $this->publishes([
+            __DIR__.'/../lang' => $this->app->resourcePath('lang/vendor/clamav-validator'),
+            ], 'lang');
+            $this->app['validator']
+                ->resolver(function ($translator, $data, $rules, $messages, $customAttributes = []) {
+                    return new ClamavValidator(
+                        $translator,
+                        $data,
+                        $rules,
+                        $messages,
+                        $customAttributes
+                    );
+                });
 
-        $this->addNewRules();
+            $this->addNewRules();
+        }
     }
 
     /**
@@ -76,8 +84,11 @@ class ClamavValidatorServiceProvider extends ServiceProvider
     {
         $method = studly_case($rule);
         $translation = $this->app['translator']->get('clamav-validator::validation');
-        $this->app['validator']->extend($rule, ClamavValidator::class .'@validate' . $method,
-            isset($translation[$rule]) ? $translation[$rule] : []);
+        $this->app['validator']->extend(
+            $rule,
+            ClamavValidator::class .'@validate' . $method,
+            isset($translation[$rule]) ? $translation[$rule] : []
+        );
     }
 
 
@@ -88,6 +99,7 @@ class ClamavValidatorServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->mergeConfigFrom(__DIR__ . '/../../config/clamav.php', 'clamav');
     }
 
 

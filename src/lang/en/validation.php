@@ -1,5 +1,5 @@
 <?php
 
-return array(
+return [
     'clamav' => 'Virus detected in file upload.',
-);
+];
