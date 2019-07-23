@@ -35,7 +35,6 @@ class ClamavValidatorServiceProviderTest extends TestCase
         $container->shouldReceive('offsetGet')->with('translator')->andReturn($translator);
         $container->shouldReceive('offsetGet')->with('validator')->andReturn($factory);
         $container->shouldReceive('offsetGet')->with('config')->andReturn($config);
-        $container->shouldReceive('runningInConsole')->andReturn(true);
         $container->shouldReceive('configPath');
         $container->shouldReceive('resourcePath');
 
