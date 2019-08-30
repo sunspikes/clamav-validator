@@ -1,6 +1,7 @@
 <?php namespace Sunspikes\ClamavValidator;
 
 use Illuminate\Contracts\Translation\Translator;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Validation\Validator;
 use Xenolope\Quahog\Client;
@@ -99,7 +100,7 @@ class ClamavValidator extends Validator
         }
 
         // if we're passed a PHP file upload array, return the "tmp_name"
-        if (is_array($file) && null !== array_get($file, 'tmp_name')) {
+        if (is_array($file) && null !== Arr::get($file, 'tmp_name')) {
             return $file['tmp_name'];
         }
 
