@@ -42,6 +42,11 @@ class ClamavValidator extends Validator
      */
     public function validateClamav($attribute, $value, $parameters)
     {
+        // Skip validation, if configured
+        if (true === Config::get('clamav.skip_validation')) {
+            return true;
+        }
+
         $file = $this->getFilePath($value);
         $clamavSocket = $this->getClamavSocket();
 
