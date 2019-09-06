@@ -1,4 +1,4 @@
-# ClamAV Validator For Laravel 5
+# ClamAV Virus Validator For Laravel
 
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/80f28825-1385-4daa-aaad-0e4c6b6b3910/mini.png)](https://insight.sensiolabs.com/projects/80f28825-1385-4daa-aaad-0e4c6b6b3910)
 [![Code Coverage](https://scrutinizer-ci.com/g/sunspikes/clamav-validator/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/sunspikes/clamav-validator/?branch=master)
@@ -7,7 +7,7 @@
 [![Latest Stable Version](https://poser.pugx.org/sunspikes/clamav-validator/v/stable)](https://packagist.org/packages/sunspikes/clamav-validator)
 [![License](https://poser.pugx.org/sunspikes/clamav-validator/license)](https://packagist.org/packages/sunspikes/clamav-validator)
 
-Custom Laravel 5 anti-virus validator for file uploads.
+A custom Laravel virus validator based on ClamAV anti-virus scanner for file uploads.
 
 * [Requirements](#requirements)
 * [Installation](#installation)
