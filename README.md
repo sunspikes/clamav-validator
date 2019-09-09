@@ -25,14 +25,13 @@ For example on an Ubuntu machine, you can do:
 
 ```sh
 # Install clamav virus scanner
-sudo apt-get update
-sudo apt-get install clamav-daemon
+sudo apt-get update && sudo apt-get install -y clamav-daemon
 
 # Update virus definitions
 sudo freshclam
 
 # Start the scanner service
-sudo service clamav-daemon start
+sudo systemctl enable --now clamav-daemon clamav-freshclam
 ```
 
 This package is not tested on windows, but if you have ClamAV running (usually on port 3310) it should work.
