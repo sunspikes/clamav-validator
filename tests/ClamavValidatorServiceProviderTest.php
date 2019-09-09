@@ -19,7 +19,7 @@ class ClamavValidatorServiceProviderTest extends TestCase
     public function testBoot()
     {
         $translator = Mockery::mock(Translator::class);
-        $translator->shouldReceive('get');
+        $translator->shouldReceive('get')->with('clamav-validator::validation')->andReturn('error');
         $translator->shouldReceive('addNamespace');
 
         $presence = Mockery::mock(PresenceVerifierInterface::class);
