@@ -48,7 +48,7 @@ class ClamavValidatorServiceProviderTest extends TestCase
         foreach ($validator->extensions as $rule => $class_and_method) {
 
             $this->assertTrue(in_array($rule, $sp->getRules()));
-            $this->assertEquals(ClamavValidator::class .'@validate' . studly_case($rule), $class_and_method);
+            $this->assertEquals(ClamavValidator::class .'@validate' . Str::studly($rule), $class_and_method);
 
             list($class, $method) = Str::parseCallback($class_and_method, null);
 
