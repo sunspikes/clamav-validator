@@ -1,6 +1,7 @@
 <?php namespace Sunspikes\ClamavValidator;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class ClamavValidatorServiceProvider extends ServiceProvider
 {
@@ -80,7 +81,7 @@ class ClamavValidatorServiceProvider extends ServiceProvider
      */
     protected function extendValidator($rule)
     {
-        $method = studly_case($rule);
+        $method = Str::studly($rule);
         $translation = $this->app['translator']->get('clamav-validator::validation');
         $this->app['validator']->extend(
             $rule,

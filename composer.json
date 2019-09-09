@@ -18,10 +18,11 @@
     "require": {
         "php": ">=5.5.0",
         "xenolope/quahog": "2.*",
-        "illuminate/support": "^5.0",
-        "illuminate/validation": "^5.0"
+        "illuminate/support": "~5.0 || ^6.0",
+        "illuminate/validation": "~5.0 || ^6.0"
     },
     "require-dev": {
+        "roave/security-advisories": "dev-master",
         "phpunit/phpunit": "4.*",
         "mockery/mockery": "0.9.*",
         "scrutinizer/ocular": "dev-master"
