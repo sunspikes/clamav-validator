@@ -85,7 +85,7 @@ Use it like any `Validator` rule:
 
 ```php
 $rules = [
-    'my_file_field' => 'clamav',
+    'file' => 'clamav',
 ];
 ```
 
@@ -93,5 +93,3 @@ $rules = [
 ## Author
 
 Krishnaprasad MG [@sunspikes] and other [awesome contributors](https://github.com/sunspikes/clamav-validator/graphs/contributors)
-
-_Contact me at [sunspikes at gmail dot com]_

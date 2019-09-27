@@ -1,17 +1,19 @@
-<?php namespace Sunspikes\ClamavValidator;
+<?php
+
+namespace Sunspikes\ClamavValidator;
 
 use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Validation\Validator;
-use Xenolope\Quahog\Client;
-use Socket\Raw\Factory;
+use Xenolope\Quahog\Client as QuahogClient;
+use Socket\Raw\Factory as SocketFactory;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ClamavValidator extends Validator
 {
     /**
-     * Creates a new instance of ClamavValidator
+     * Creates a new instance of ClamavValidator.
      *
      * ClamavValidator constructor.
      * @param Translator $translator
@@ -31,7 +33,7 @@ class ClamavValidator extends Validator
     }
 
     /**
-     * Validate the uploaded file for virus/malware with ClamAV
+     * Validate the uploaded file for virus/malware with ClamAV.
      *
      * @param  $attribute   string
      * @param  $value       mixed
@@ -42,38 +44,33 @@ class ClamavValidator extends Validator
      */
     public function validateClamav($attribute, $value, $parameters)
     {
-        // Skip validation, if configured
         if (true === Config::get('clamav.skip_validation')) {
             return true;
         }
 
         $file = $this->getFilePath($value);
-        $clamavSocket = $this->getClamavSocket();
-
-        // Create a new socket instance
-        $socket = (new Factory())->createClient($clamavSocket);
-
-        // Create a new instance of the Client
-        $quahog = new Client($socket, Config::get('clamav.socket_read_timeout'), PHP_NORMAL_READ);
-
-        // Check if the file is readable
         if (! is_readable($file)) {
-            throw new ClamavValidatorException(sprintf('The file "%s" is not readable', $file));
+            throw ClamavValidatorException::forNonReadableFile($file);
         }
 
-        // Scan the file
-        $result = $quahog->scanResourceStream(fopen($file, 'rb'));
-
-        if (Client::RESULT_ERROR === $result['status']) {
-            throw new ClamavValidatorException($result['reason']);
+        try {
+            $socket  = $this->getClamavSocket();
+            $scanner = $this->createQuahogScannerClient($socket);
+            $result  = $scanner->scanResourceStream(fopen($file, 'rb'));
+        } catch (\Exception $exception) {
+            throw ClamavValidatorException::forClientException($exception);
         }
 
-        // Check if scan result is not clean
-        return Client::RESULT_OK === $result['status'];
+        if (QuahogClient::RESULT_ERROR === $result['status']) {
+            throw ClamavValidatorException::forScanResult($result);
+        }
+
+        // Check if scan result is clean
+        return QuahogClient::RESULT_OK === $result['status'];
     }
 
     /**
-     * Guess the ClamAV socket
+     * Guess the ClamAV socket.
      *
      * @return string
      */
@@ -87,14 +84,15 @@ class ClamavValidator extends Validator
                 return 'unix://' . $unixSocket;
             }
         }
+
         // We use the tcp_socket as fallback as well
         return Config::get('clamav.tcp_socket');
     }
 
     /**
-     * Return the file path from the passed object
+     * Return the file path from the passed object.
      *
-     * @param $file mixed
+     * @param mixed $file
      * @return string
      */
     protected function getFilePath($file)
@@ -111,5 +109,19 @@ class ClamavValidator extends Validator
 
         // fallback: we were likely passed a path already
         return $file;
+    }
+
+    /**
+     * Create a new quahog ClamAV scanner client.
+     *
+     * @param string $socket
+     * @return QuahogClient
+     */
+    protected function createQuahogScannerClient($socket)
+    {
+        // Create a new client socket instance
+        $client = (new SocketFactory())->createClient($socket);
+
+        return new QuahogClient($client, Config::get('clamav.socket_read_timeout'), PHP_NORMAL_READ);
     }
 }

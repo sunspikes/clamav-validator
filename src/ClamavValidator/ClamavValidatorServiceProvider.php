@@ -1,4 +1,6 @@
-<?php namespace Sunspikes\ClamavValidator;
+<?php
+
+namespace Sunspikes\ClamavValidator;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
