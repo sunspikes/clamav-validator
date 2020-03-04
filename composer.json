@@ -18,8 +18,8 @@
     "require": {
         "php": ">=5.5.0",
         "xenolope/quahog": "2.*",
-        "illuminate/support": "~5.0 || ^6.0",
-        "illuminate/validation": "~5.0 || ^6.0"
+        "illuminate/support": "~5.0 || ^6.0 || ^7.0",
+        "illuminate/validation": "~5.0 || ^6.0 || ^7.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
