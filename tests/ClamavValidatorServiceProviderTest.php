@@ -29,9 +29,7 @@ class ClamavValidatorServiceProviderTest extends TestCase
 
         $config = Config::spy();
 
-        $container = Mockery::mock(Container::class);
-        $container->shouldReceive('bind');
-        $container->shouldReceive('loadTranslationsFrom');
+        $container = Mockery::mock(Container::class)->makePartial();
         $container->shouldReceive('offsetGet')->with('translator')->andReturn($translator);
         $container->shouldReceive('offsetGet')->with('validator')->andReturn($factory);
         $container->shouldReceive('offsetGet')->with('config')->andReturn($config);

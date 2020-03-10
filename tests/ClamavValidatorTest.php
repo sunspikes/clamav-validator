@@ -23,6 +23,7 @@ class ClamavValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator = Mockery::mock(Translator::class);
         $this->translator->shouldReceive('get')->with('validation.custom.file.clamav')->andReturn('error');
+        $this->translator->shouldReceive('get')->withAnyArgs()->andReturn(null);
         $this->translator->shouldReceive('get')->with('validation.attributes')->andReturn([]);
         $this->translator->shouldReceive('trans');
         $this->clean_data = [
