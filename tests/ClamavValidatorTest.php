@@ -18,6 +18,8 @@ class ClamavValidatorTest extends \PHPUnit_Framework_TestCase
     protected $error_data;
     protected $rules;
     protected $messages;
+    protected $multiple_files_all_clean;
+    protected $multiple_files_some_with_virus;
 
     public function setUp()
     {
@@ -35,6 +37,19 @@ class ClamavValidatorTest extends \PHPUnit_Framework_TestCase
         $this->error_data = [
             'file' => $this->getTempPath(__DIR__ . '/files/test3.txt')
         ];
+        $this->multiple_files_all_clean = [
+        	'files' => [
+				$this->getTempPath(__DIR__ . '/files/test1.txt'),
+				$this->getTempPath(__DIR__ . '/files/test4.txt'),
+			]
+		];
+        $this->multiple_files_some_with_virus = [
+			'files' => [
+				$this->getTempPath(__DIR__ . '/files/test1.txt'),
+				$this->getTempPath(__DIR__ . '/files/test2.txt'),
+				$this->getTempPath(__DIR__ . '/files/test4.txt'),
+			]
+		];
         $this->messages = [];
 
         $config = new Config();
@@ -66,6 +81,18 @@ class ClamavValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($validator->passes());
     }
 
+	public function testValidatesCleanMultiFile()
+	{
+		$validator = new ClamavValidator(
+			$this->translator,
+			$this->multiple_files_all_clean,
+			['files' => 'clamav'],
+			$this->messages
+		);
+
+		$this->assertTrue($validator->passes());
+	}
+
     public function testValidatesVirus()
     {
         $validator = new ClamavValidator(
@@ -77,6 +104,18 @@ class ClamavValidatorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($validator->passes());
     }
+
+	public function testValidatesVirusMultiFile()
+	{
+		$validator = new ClamavValidator(
+			$this->translator,
+			$this->multiple_files_some_with_virus,
+			['files' => 'clamav'],
+			$this->messages
+		);
+
+		$this->assertFalse($validator->passes());
+	}
 
     public function testValidatesError()
     {
