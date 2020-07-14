@@ -49,15 +49,15 @@ class ClamavValidator extends Validator
         }
 
         if(is_array($value)) {
-        	$result = TRUE;    /* Assume all will be well */
+        	$result = true;
         	foreach($value as $file) {
         		$result &= $this->validateFileWithClamAv($file);
 			}
 
         	return $result;
-		} else {
-        	return $this->validateFileWithClamAv($value);
 		}
+
+		return $this->validateFileWithClamAv($value);
 	}
 
 	/**
