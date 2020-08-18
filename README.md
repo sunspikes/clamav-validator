@@ -35,6 +35,7 @@ sudo systemctl enable --now clamav-daemon clamav-freshclam
 ```
 
 This package is not tested on windows, but if you have ClamAV running (usually on port 3310) it should work.
+You will also need to have `sockets` extension installed and enabled (all executions without this module will fail with this error - `"Use of undefined constant 'AF_INET'"`).
 
 <a name="installation"></a>
 ## Installation
