@@ -48,6 +48,28 @@ class ClamavValidator extends Validator
             return true;
         }
 
+        if(is_array($value)) {
+        	$result = true;
+        	foreach($value as $file) {
+        		$result &= $this->validateFileWithClamAv($file);
+			}
+
+        	return $result;
+		}
+
+		return $this->validateFileWithClamAv($value);
+	}
+
+	/**
+	 * Validate the single uploaded file for virus/malware with ClamAV.
+	 *
+	 * @param $value mixed
+	 *
+	 * @return bool
+	 * @throws ClamavValidatorException
+	 */
+	protected function validateFileWithClamAv($value)
+	{
         $file = $this->getFilePath($value);
         if (! is_readable($file)) {
             throw ClamavValidatorException::forNonReadableFile($file);

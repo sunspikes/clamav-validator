@@ -90,6 +90,8 @@ $rules = [
 ];
 ```
 
+`ClamavValidator` will automatically run multiple files one-by-one through ClamAV in case `file` represent multiple uploaded files.
+
 <a name="author"></a>
 ## Author
 
