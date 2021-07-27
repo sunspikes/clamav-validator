@@ -4,6 +4,7 @@ namespace Sunspikes\ClamavValidator;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Validator;
 
 class ClamavValidatorServiceProvider extends ServiceProvider
 {
@@ -39,16 +40,6 @@ class ClamavValidatorServiceProvider extends ServiceProvider
         $this->publishes([
         __DIR__.'/../lang' => $this->app->resourcePath('lang/vendor/clamav-validator'),
         ], 'lang');
-        $this->app['validator']
-            ->resolver(function ($translator, $data, $rules, $messages, $customAttributes = []) {
-                return new ClamavValidator(
-                    $translator,
-                    $data,
-                    $rules,
-                    $messages,
-                    $customAttributes
-                );
-            });
 
         $this->addNewRules();
     }
@@ -100,6 +91,20 @@ class ClamavValidatorServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->extend('validator', function($service) {
+            $service->resolver(function ($translator, $data, $rules, $messages, $customAttributes = []) {
+                return new ClamavValidator(
+                    $translator,
+                    $data,
+                    $rules,
+                    $messages,
+                    $customAttributes
+                );
+            });
+
+            return $service;
+        });
+
         $this->mergeConfigFrom(__DIR__ . '/../../config/clamav.php', 'clamav');
     }
 
