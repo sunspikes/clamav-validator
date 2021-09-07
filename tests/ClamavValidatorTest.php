@@ -56,6 +56,7 @@ class ClamavValidatorTest extends \PHPUnit_Framework_TestCase
         $config->shouldReceive('get')->with('clamav.preferred_socket')->andReturn('unix_socket');
         $config->shouldReceive('get')->with('clamav.unix_socket')->andReturn('/var/run/clamav/clamd.ctl');
         $config->shouldReceive('get')->with('clamav.tcp_socket')->andReturn('tcp://127.0.0.1:3310');
+        $config->shouldReceive('get')->with('clamav.socket_connect_timeout')->andReturn(5);
         $config->shouldReceive('get')->with('clamav.socket_read_timeout')->andReturn(30);
         $config->shouldReceive('get')->with('clamav.skip_validation')->andReturn(false);
 
