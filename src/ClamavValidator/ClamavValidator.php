@@ -121,7 +121,7 @@ class ClamavValidator extends Validator
     {
         // if were passed an instance of UploadedFile, return the path
         if ($file instanceof UploadedFile) {
-            return $file->getPathname();
+            return $file->getRealPath();
         }
 
         // if we're passed a PHP file upload array, return the "tmp_name"
