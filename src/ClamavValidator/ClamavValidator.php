@@ -80,11 +80,17 @@ class ClamavValidator extends Validator
             $scanner = $this->createQuahogScannerClient($socket);
             $result  = $scanner->scanResourceStream(fopen($file, 'rb'));
         } catch (\Exception $exception) {
-            throw ClamavValidatorException::forClientException($exception);
+            if (Config::get('clamav.client_exceptions')) {
+                throw ClamavValidatorException::forClientException($exception);
+            }
+            return false;
         }
 
         if (QuahogClient::RESULT_ERROR === $result['status']) {
-            throw ClamavValidatorException::forScanResult($result);
+            if (Config::get('clamav.client_exceptions')) {
+                throw ClamavValidatorException::forScanResult($result);
+            }
+            return false;
         }
 
         // Check if scan result is clean
