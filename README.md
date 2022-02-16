@@ -34,7 +34,7 @@ sudo freshclam
 sudo systemctl enable --now clamav-daemon clamav-freshclam
 ```
 
-This package is not tested on windows, but if you have ClamAV running (usually on port 3310) it should work.
+This package is not tested on Windows, but if you have ClamAV running (usually on port 3310) it should work.
 You will also need to have `sockets` extension installed and enabled (all executions without this module will fail with this error - `"Use of undefined constant 'AF_INET'"`).
 
 <a name="installation"></a>
@@ -59,7 +59,7 @@ If you are using Laravel < 5.5, you need to add `Sunspikes\ClamavValidator\Clama
 	Sunspikes\ClamavValidator\ClamavValidatorServiceProvider::class,
 ],
 ```
-#### 3. Publish assets from the the vendor package
+#### 3. Publish assets from the vendor package
 
 ##### Config file
 
@@ -72,7 +72,7 @@ Once the command is finished you should have a `config/clamav.php` file that wil
 
 ##### Language files
 
-If you want to customize the translation or add your own language you can run the the following command to
+If you want to customize the translation or add your own language you can run the following command to
 publish the language files to a folder you maintain:
 
     php artisan vendor:publish --provider="Sunspikes\ClamavValidator\ClamavValidatorServiceProvider" --tag=lang

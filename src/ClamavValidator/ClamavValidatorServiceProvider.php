@@ -7,14 +7,6 @@ use Illuminate\Support\Str;
 
 class ClamavValidatorServiceProvider extends ServiceProvider
 {
-
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
     /**
      * The list of validator rules.
      *
@@ -37,7 +29,9 @@ class ClamavValidatorServiceProvider extends ServiceProvider
             __DIR__ . '/../../config/clamav.php' => $this->app->configPath('clamav.php'),
         ], 'config');
         $this->publishes([
-        __DIR__.'/../lang' => $this->app->resourcePath('lang/vendor/clamav-validator'),
+            __DIR__ . '/../lang' => method_exists($this->app, 'langPath') ?
+                $this->app->langPath('vendor/clamav-validator')
+                : $this->app->resourcePath('lang/vendor/clamav-validator'),
         ], 'lang');
         $this->app['validator']
             ->resolver(function ($translator, $data, $rules, $messages, $customAttributes = []) {
@@ -58,7 +52,7 @@ class ClamavValidatorServiceProvider extends ServiceProvider
      *
      * @return array
      */
-    public function getRules()
+    public function getRules(): array
     {
         return $this->rules;
     }
@@ -78,17 +72,17 @@ class ClamavValidatorServiceProvider extends ServiceProvider
     /**
      * Extend the validator with new rules.
      *
-     * @param  string $rule
+     * @param string $rule
      * @return void
      */
-    protected function extendValidator($rule)
+    protected function extendValidator(string $rule)
     {
         $method = Str::studly($rule);
         $translation = $this->app['translator']->get('clamav-validator::validation');
         $this->app['validator']->extend(
             $rule,
-            ClamavValidator::class .'@validate' . $method,
-            isset($translation[$rule]) ? $translation[$rule] : []
+            ClamavValidator::class . '@validate' . $method,
+            $translation[$rule] ?? []
         );
     }
 
@@ -101,16 +95,5 @@ class ClamavValidatorServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__ . '/../../config/clamav.php', 'clamav');
-    }
-
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [];
     }
 }
