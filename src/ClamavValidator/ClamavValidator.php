@@ -149,7 +149,7 @@ class ClamavValidator extends Validator
     protected function createQuahogScannerClient(string $socket): QuahogClient
     {
         // Create a new client socket instance
-        $client = (new SocketFactory())->createClient($socket);
+        $client = (new SocketFactory())->createClient($socket, Config::get('clamav.socket_connect_timeout'));
 
         return new QuahogClient($client, Config::get('clamav.socket_read_timeout'), PHP_NORMAL_READ);
     }

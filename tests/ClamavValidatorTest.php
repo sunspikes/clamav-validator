@@ -61,6 +61,7 @@ class ClamavValidatorTest extends TestCase
         $config->shouldReceive('get')->with('clamav.unix_socket')->andReturn(!$opts['error'] ? '/var/run/clamav/clamd.ctl' : '/dev/null');
         $config->shouldReceive('get')->with('clamav.tcp_socket')->andReturn(!$opts['error'] ? 'tcp://127.0.0.1:3310' : 'tcp://127.0.0.1:0');
         $config->shouldReceive('get')->with('clamav.socket_read_timeout')->andReturn(30);
+        $config->shouldReceive('get')->with('clamav.socket_connect_timeout')->andReturn(5);
         $config->shouldReceive('get')->with('clamav.skip_validation')->andReturn($opts['skip']);
 
         Config::swap($config);

@@ -32,6 +32,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Socket connect timeout
+    |--------------------------------------------------------------------------
+    | This option defines the maximum time to wait in seconds for socket connection attempts before failure or timeout, default null = no limit.
+    */
+    'socket_connect_timeout' => env('CLAMAV_SOCKET_CONNECT_TIMEOUT', null),
+
+    /*
+    |--------------------------------------------------------------------------
     | Socket read timeout
     |--------------------------------------------------------------------------
     | This option defines the maximum time to wait in seconds for a read.
