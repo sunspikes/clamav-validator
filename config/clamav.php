@@ -48,6 +48,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Throw exceptions instead of returning failures when scan fails.
+    |--------------------------------------------------------------------------
+    | This makes it easier for a developer to find the source of a clamav
+    | failure, but an end user may only see a 500 error for the user
+    | if exceptions are not displayed.
+    */
+    'client_exceptions' => env('CLAMAV_CLIENT_EXCEPTIONS', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Skip validation
     |--------------------------------------------------------------------------
     | This skips the virus validation for current environment.

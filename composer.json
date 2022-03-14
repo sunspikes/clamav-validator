@@ -16,15 +16,16 @@
         }
     ],
     "require": {
-        "php": ">=5.5.0",
-        "xenolope/quahog": "2.*",
-        "illuminate/support": "~5.0 || ^6.0 || ^7.0 || ^8.0",
-        "illuminate/validation": "~5.0 || ^6.0 || ^7.0 || ^8.0"
+        "php": "^7.3|^8.0",
+        "ext-sockets": "*",
+        "xenolope/quahog": "^3.0",
+        "illuminate/support": "~5.0 || ^6.0 || ^7.0 || ^8.0 || ^9.0",
+        "illuminate/validation": "~5.0 || ^6.0 || ^7.0 || ^8.0 || ^9.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
-        "phpunit/phpunit": "4.*",
-        "mockery/mockery": "1.2.*",
+        "phpunit/phpunit": "^9.5.10",
+        "mockery/mockery": "^1.5.0",
         "scrutinizer/ocular": "dev-master"
     },
     "autoload": {
@@ -41,7 +42,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Sunspikes\\Tests\\ClamavValidator\\": "src/"
+            "Sunspikes\\Tests\\ClamavValidator\\": "tests/"
         }
     },
     "minimum-stability": "dev",

@@ -2,15 +2,14 @@
 
 namespace Sunspikes\Tests\ClamavValidator;
 
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Facade;
 use Mockery;
 use Illuminate\Contracts\Translation\Translator;
 use Sunspikes\ClamavValidator\ClamavValidator;
 use Sunspikes\ClamavValidator\ClamavValidatorException;
+use PHPUnit\Framework\TestCase;
 
-class ClamavValidatorTest extends \PHPUnit_Framework_TestCase
+class ClamavValidatorTest extends TestCase
 {
     protected $translator;
     protected $clean_data;
@@ -21,13 +20,12 @@ class ClamavValidatorTest extends \PHPUnit_Framework_TestCase
     protected $multiple_files_all_clean;
     protected $multiple_files_some_with_virus;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->translator = Mockery::mock(Translator::class);
         $this->translator->shouldReceive('get')->with('validation.custom.file.clamav')->andReturn('error');
         $this->translator->shouldReceive('get')->withAnyArgs()->andReturn(null);
         $this->translator->shouldReceive('get')->with('validation.attributes')->andReturn([]);
-        $this->translator->shouldReceive('trans');
         $this->clean_data = [
             'file' => $this->getTempPath(__DIR__ . '/files/test1.txt')
         ];
@@ -50,28 +48,49 @@ class ClamavValidatorTest extends \PHPUnit_Framework_TestCase
 				$this->getTempPath(__DIR__ . '/files/test4.txt'),
 			]
 		];
-        $this->messages = [];
-
-        $config = new Config();
-        $config->shouldReceive('get')->with('clamav.preferred_socket')->andReturn('unix_socket');
-        $config->shouldReceive('get')->with('clamav.unix_socket')->andReturn('/var/run/clamav/clamd.ctl');
-        $config->shouldReceive('get')->with('clamav.tcp_socket')->andReturn('tcp://127.0.0.1:3310');
-        $config->shouldReceive('get')->with('clamav.socket_connect_timeout')->andReturn(5);
-        $config->shouldReceive('get')->with('clamav.socket_read_timeout')->andReturn(30);
-        $config->shouldReceive('get')->with('clamav.skip_validation')->andReturn(false);
-
-        $application = Mockery::mock(Application::class, ['make' => $config]);
-        Facade::setFacadeApplication($application);
+        $this->messages = ['clamav' => ':attribute contains virus.'];
     }
 
-    public function tearDown()
+    private function setConfig(array $opts = []): void
+    {
+        $opts = array_merge(['error' => false, 'skip' => false, 'exception' => false], $opts);
+
+        $config = Mockery::mock();
+        $config->shouldReceive('get')->with('clamav.preferred_socket')->andReturn('unix_socket');
+        $config->shouldReceive('get')->with('clamav.client_exceptions')->andReturn($opts['exception']);
+        $config->shouldReceive('get')->with('clamav.unix_socket')->andReturn(!$opts['error'] ? '/var/run/clamav/clamd.ctl' : '/dev/null');
+        $config->shouldReceive('get')->with('clamav.tcp_socket')->andReturn(!$opts['error'] ? 'tcp://127.0.0.1:3310' : 'tcp://127.0.0.1:0');
+        $config->shouldReceive('get')->with('clamav.socket_read_timeout')->andReturn(30);
+        $config->shouldReceive('get')->with('clamav.socket_connect_timeout')->andReturn(5);
+        $config->shouldReceive('get')->with('clamav.skip_validation')->andReturn($opts['skip']);
+
+        Config::swap($config);
+    }
+
+    protected function tearDown(): void
     {
         chmod($this->error_data['file'], 0644);
         Mockery::close();
     }
 
+    public function testValidatesSkipped()
+    {
+        $this->setConfig(['skip' => true]);
+
+        $validator = new ClamavValidator(
+            $this->translator,
+            $this->clean_data,
+            ['file' => 'clamav'],
+            $this->messages
+        );
+
+        $this->assertTrue($validator->passes());
+    }
+
     public function testValidatesClean()
     {
+        $this->setConfig();
+
         $validator = new ClamavValidator(
             $this->translator,
             $this->clean_data,
@@ -84,6 +103,8 @@ class ClamavValidatorTest extends \PHPUnit_Framework_TestCase
 
 	public function testValidatesCleanMultiFile()
 	{
+        $this->setConfig();
+
 		$validator = new ClamavValidator(
 			$this->translator,
 			$this->multiple_files_all_clean,
@@ -96,6 +117,8 @@ class ClamavValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testValidatesVirus()
     {
+        $this->setConfig();
+
         $validator = new ClamavValidator(
             $this->translator,
             $this->virus_data,
@@ -103,11 +126,13 @@ class ClamavValidatorTest extends \PHPUnit_Framework_TestCase
             $this->messages
         );
 
-        $this->assertFalse($validator->passes());
+        $this->assertTrue($validator->fails());
     }
 
 	public function testValidatesVirusMultiFile()
 	{
+        $this->setConfig();
+
 		$validator = new ClamavValidator(
 			$this->translator,
 			$this->multiple_files_some_with_virus,
@@ -115,12 +140,14 @@ class ClamavValidatorTest extends \PHPUnit_Framework_TestCase
 			$this->messages
 		);
 
-		$this->assertFalse($validator->passes());
+		$this->assertTrue($validator->fails());
 	}
 
-    public function testValidatesError()
+    public function testCannotValidateNonReadable()
     {
-        $this->setExpectedException(ClamavValidatorException::class, 'is not readable');
+        $this->setConfig();
+
+        $this->expectException(ClamavValidatorException::class);
 
         $validator = new ClamavValidator(
             $this->translator,
@@ -134,13 +161,43 @@ class ClamavValidatorTest extends \PHPUnit_Framework_TestCase
         $validator->passes();
     }
 
+    public function testFailsValidationOnError()
+    {
+        $this->setConfig(['error' => true]);
+
+        $validator = new ClamavValidator(
+            $this->translator,
+            $this->clean_data,
+            ['file' => 'clamav'],
+            $this->messages
+        );
+
+        $this->assertTrue($validator->fails());
+    }
+
+    public function testThrowsExceptionOnValidationError()
+    {
+        $this->setConfig(['error' => true, 'exception' => true]);
+
+        $this->expectException(ClamavValidatorException::class);
+
+        $validator = new ClamavValidator(
+            $this->translator,
+            $this->clean_data,
+            ['file' => 'clamav'],
+            $this->messages
+        );
+
+        $this->assertTrue($validator->fails());
+    }
+
     /**
      * Move to temp dir, so that clamav can access the file
      *
      * @param $file
      * @return string
      */
-    private function getTempPath($file)
+    private function getTempPath($file): string
     {
         $tempPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . basename($file);
         copy($file, $tempPath);
