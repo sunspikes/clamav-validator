@@ -3,8 +3,8 @@
 namespace Sunspikes\Tests\ClamavValidator;
 
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Translation\Translator;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Validation\PresenceVerifierInterface;
 use Mockery;
@@ -27,12 +27,10 @@ class ClamavValidatorServiceProviderTest extends TestCase
         $factory = new Factory($translator);
         $factory->setPresenceVerifier($presence);
 
-        $config = Config::spy();
-
+        /** @var Mockery\Mock|Application $container */
         $container = Mockery::mock(Container::class)->makePartial();
         $container->shouldReceive('offsetGet')->with('translator')->andReturn($translator);
         $container->shouldReceive('offsetGet')->with('validator')->andReturn($factory);
-        $container->shouldReceive('offsetGet')->with('config')->andReturn($config);
         $container->shouldReceive('configPath');
         $container->shouldReceive('resourcePath');
 
@@ -48,13 +46,13 @@ class ClamavValidatorServiceProviderTest extends TestCase
             $this->assertTrue(in_array($rule, $sp->getRules()));
             $this->assertEquals(ClamavValidator::class .'@validate' . Str::studly($rule), $class_and_method);
 
-            list($class, $method) = Str::parseCallback($class_and_method, null);
+            list($class, $method) = Str::parseCallback($class_and_method);
 
             $this->assertTrue(method_exists($class, $method));
         }
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
