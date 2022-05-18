@@ -30,7 +30,7 @@ class ClamavValidatorServiceProvider extends ServiceProvider
         ], 'config');
         $this->publishes([
             __DIR__ . '/../lang' => method_exists($this->app, 'langPath') ?
-                $this->app->langPath('vendor/clamav-validator')
+                $this->app->langPath().'/vendor/clamav-validator'
                 : $this->app->resourcePath('lang/vendor/clamav-validator'),
         ], 'lang');
         $this->app['validator']
