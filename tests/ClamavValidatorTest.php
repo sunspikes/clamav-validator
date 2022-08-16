@@ -87,6 +87,20 @@ class ClamavValidatorTest extends TestCase
         $this->assertTrue($validator->passes());
     }
 
+    public function testValidatesSkippedForBoolValidatedConfigValues()
+    {
+        $this->setConfig(['skip' => '1']);
+
+        $validator = new ClamavValidator(
+            $this->translator,
+            $this->clean_data,
+            ['file' => 'clamav'],
+            $this->messages
+        );
+
+        $this->assertTrue($validator->passes());
+    }
+
     public function testValidatesClean()
     {
         $this->setConfig();
