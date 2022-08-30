@@ -45,7 +45,7 @@ class ClamavValidator extends Validator
      */
     public function validateClamav(string $attribute, $value, array $parameters): bool
     {
-        if (true === Config::get('clamav.skip_validation')) {
+        if (! $value || true === Config::get('clamav.skip_validation')) {
             return true;
         }
 
