@@ -11,9 +11,6 @@ use Sunspikes\ClamavValidator\Rules\ClamAv;
 
 /**
  * Validator Tests Helper
- *
- * @author Alin Eugen Deac <ade@rspsystems.com>
- * @package Sunspikes\Tests\ClamavValidator\Helpers
  */
 trait ValidatorHelper
 {

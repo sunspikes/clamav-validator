@@ -15,9 +15,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  * @deprecated Use {@see \Sunspikes\ClamavValidator\Rules\ClamAv} validation rule instead.
  *
  * Clamav Validator
- *
- * @author Alin Eugen Deac <ade@rspsystems.com>
- * @package Sunspikes\ClamavValidator
  */
 class ClamavValidator extends Validator
 {
