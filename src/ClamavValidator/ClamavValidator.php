@@ -72,14 +72,15 @@ class ClamavValidator extends Validator
 	protected function validateFileWithClamAv($value): bool
     {
         $file = $this->getFilePath($value);
-        if (! is_readable($file)) {
+        if (! is_resource($file) && ! is_readable($file)) {
             throw ClamavValidatorException::forNonReadableFile($file);
         }
 
         try {
             $socket  = $this->getClamavSocket();
             $scanner = $this->createQuahogScannerClient($socket);
-            $result  = $scanner->scanResourceStream(fopen($file, 'rb'));
+            $stream = is_resource($file) ? $file : fopen($file, 'rb');
+            $result  = $scanner->scanResourceStream($stream);
         } catch (Exception $exception) {
             if (Config::get('clamav.client_exceptions')) {
                 throw ClamavValidatorException::forClientException($exception);
@@ -129,6 +130,10 @@ class ClamavValidator extends Validator
         // if were passed an instance of UploadedFile, return the path
         if ($file instanceof UploadedFile) {
             return $file->getRealPath();
+        }
+
+        if (is_resource($file)) {
+            return $file;
         }
 
         // if we're passed a PHP file upload array, return the "tmp_name"
