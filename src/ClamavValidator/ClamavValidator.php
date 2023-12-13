@@ -45,7 +45,7 @@ class ClamavValidator extends Validator
      */
     public function validateClamav(string $attribute, $value, array $parameters): bool
     {
-        if (filter_var(Config::get('clamav.skip_validation'), FILTER_VALIDATE_BOOLEAN)) { 
+        if (filter_var(Config::get('clamav.skip_validation'), FILTER_VALIDATE_BOOLEAN)) {
             return true;
         }
 
@@ -71,9 +71,13 @@ class ClamavValidator extends Validator
 	 */
 	protected function validateFileWithClamAv($value): bool
     {
-        $file = $this->getFilePath($value);
-        if (! is_resource($file) && ! is_readable($file)) {
-            throw ClamavValidatorException::forNonReadableFile($file);
+        if (is_resource($value)) {
+            $file = $value;
+        } else {
+            $file = $this->getFilePath($value);
+            if (! is_readable($file)) {
+                throw ClamavValidatorException::forNonReadableFile($file);
+            }
         }
 
         try {
@@ -130,10 +134,6 @@ class ClamavValidator extends Validator
         // if were passed an instance of UploadedFile, return the path
         if ($file instanceof UploadedFile) {
             return $file->getRealPath();
-        }
-
-        if (is_resource($file)) {
-            return $file;
         }
 
         // if we're passed a PHP file upload array, return the "tmp_name"
