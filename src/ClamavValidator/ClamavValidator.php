@@ -81,10 +81,10 @@ class ClamavValidator extends Validator
         }
 
         try {
-            $socket  = $this->getClamavSocket();
+            $socket = $this->getClamavSocket();
             $scanner = $this->createQuahogScannerClient($socket);
             $stream = is_resource($file) ? $file : fopen($file, 'rb');
-            $result  = $scanner->scanResourceStream($stream);
+            $result = $scanner->scanResourceStream($stream);
         } catch (Exception $exception) {
             if (Config::get('clamav.client_exceptions')) {
                 throw ClamavValidatorException::forClientException($exception);
