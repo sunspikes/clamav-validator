@@ -45,7 +45,7 @@ class ClamavValidator extends Validator
      */
     public function validateClamav(string $attribute, $value, array $parameters): bool
     {
-        if (filter_var(Config::get('clamav.skip_validation'), FILTER_VALIDATE_BOOLEAN)) { 
+        if (filter_var(Config::get('clamav.skip_validation'), FILTER_VALIDATE_BOOLEAN)) {
             return true;
         }
 
@@ -71,15 +71,20 @@ class ClamavValidator extends Validator
 	 */
 	protected function validateFileWithClamAv($value): bool
     {
-        $file = $this->getFilePath($value);
-        if (! is_readable($file)) {
-            throw ClamavValidatorException::forNonReadableFile($file);
+        if (is_resource($value)) {
+            $file = $value;
+        } else {
+            $file = $this->getFilePath($value);
+            if (! is_readable($file)) {
+                throw ClamavValidatorException::forNonReadableFile($file);
+            }
         }
 
         try {
-            $socket  = $this->getClamavSocket();
+            $socket = $this->getClamavSocket();
             $scanner = $this->createQuahogScannerClient($socket);
-            $result  = $scanner->scanResourceStream(fopen($file, 'rb'));
+            $stream = is_resource($file) ? $file : fopen($file, 'rb');
+            $result = $scanner->scanResourceStream($stream);
         } catch (Exception $exception) {
             if (Config::get('clamav.client_exceptions')) {
                 throw ClamavValidatorException::forClientException($exception);
