@@ -2,30 +2,26 @@
 
 namespace Sunspikes\Tests\ClamavValidator;
 
+use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Config;
 use Mockery;
-use Illuminate\Contracts\Translation\Translator;
-use Sunspikes\ClamavValidator\ClamavValidator;
 use Sunspikes\ClamavValidator\ClamavValidatorException;
 use PHPUnit\Framework\TestCase;
+use Sunspikes\Tests\ClamavValidator\Helpers\ValidatorHelper;
 
 class ClamavValidatorTest extends TestCase
 {
-    protected $translator;
+    use ValidatorHelper;
+
     protected $clean_data;
     protected $virus_data;
     protected $error_data;
     protected $rules;
-    protected $messages;
     protected $multiple_files_all_clean;
     protected $multiple_files_some_with_virus;
 
     protected function setUp(): void
     {
-        $this->translator = Mockery::mock(Translator::class);
-        $this->translator->shouldReceive('get')->with('validation.custom.file.clamav')->andReturn('error');
-        $this->translator->shouldReceive('get')->withAnyArgs()->andReturn(null);
-        $this->translator->shouldReceive('get')->with('validation.attributes')->andReturn([]);
         $this->clean_data = [
             'file' => $this->getTempPath(__DIR__ . '/files/test1.txt')
         ];
@@ -48,7 +44,6 @@ class ClamavValidatorTest extends TestCase
 				$this->getTempPath(__DIR__ . '/files/test4.txt'),
 			]
 		];
-        $this->messages = ['clamav' => ':attribute contains virus.'];
     }
 
     private function setConfig(array $opts = []): void
@@ -70,6 +65,9 @@ class ClamavValidatorTest extends TestCase
     protected function tearDown(): void
     {
         chmod($this->error_data['file'], 0644);
+
+        Container::getInstance()->flush();
+
         Mockery::close();
     }
 
@@ -77,11 +75,9 @@ class ClamavValidatorTest extends TestCase
     {
         $this->setConfig(['skip' => true]);
 
-        $validator = new ClamavValidator(
-            $this->translator,
+        $validator = $this->makeValidator(
             $this->clean_data,
             ['file' => 'clamav'],
-            $this->messages
         );
 
         $this->assertTrue($validator->passes());
@@ -91,11 +87,9 @@ class ClamavValidatorTest extends TestCase
     {
         $this->setConfig(['skip' => '1']);
 
-        $validator = new ClamavValidator(
-            $this->translator,
+        $validator = $this->makeValidator(
             $this->clean_data,
             ['file' => 'clamav'],
-            $this->messages
         );
 
         $this->assertTrue($validator->passes());
@@ -105,11 +99,9 @@ class ClamavValidatorTest extends TestCase
     {
         $this->setConfig();
 
-        $validator = new ClamavValidator(
-            $this->translator,
+        $validator = $this->makeValidator(
             $this->clean_data,
             ['file' => 'clamav'],
-            $this->messages
         );
 
         $this->assertTrue($validator->passes());
@@ -119,12 +111,10 @@ class ClamavValidatorTest extends TestCase
 	{
         $this->setConfig();
 
-		$validator = new ClamavValidator(
-			$this->translator,
+        $validator = $this->makeValidator(
 			$this->multiple_files_all_clean,
 			['files' => 'clamav'],
-			$this->messages
-		);
+        );
 
 		$this->assertTrue($validator->passes());
 	}
@@ -133,11 +123,9 @@ class ClamavValidatorTest extends TestCase
     {
         $this->setConfig();
 
-        $validator = new ClamavValidator(
-            $this->translator,
+        $validator = $this->makeValidator(
             $this->virus_data,
             ['file' => 'clamav'],
-            $this->messages
         );
 
         $this->assertTrue($validator->fails());
@@ -147,12 +135,10 @@ class ClamavValidatorTest extends TestCase
 	{
         $this->setConfig();
 
-		$validator = new ClamavValidator(
-			$this->translator,
-			$this->multiple_files_some_with_virus,
-			['files' => 'clamav'],
-			$this->messages
-		);
+        $validator = $this->makeValidator(
+            $this->multiple_files_some_with_virus,
+            ['files' => 'clamav'],
+        );
 
 		$this->assertTrue($validator->fails());
 	}
@@ -163,11 +149,9 @@ class ClamavValidatorTest extends TestCase
 
         $this->expectException(ClamavValidatorException::class);
 
-        $validator = new ClamavValidator(
-            $this->translator,
+        $validator = $this->makeValidator(
             $this->error_data,
             ['file' => 'clamav'],
-            $this->messages
         );
 
         chmod($this->error_data['file'], 0000);
@@ -179,11 +163,9 @@ class ClamavValidatorTest extends TestCase
     {
         $this->setConfig(['error' => true]);
 
-        $validator = new ClamavValidator(
-            $this->translator,
+        $validator = $this->makeValidator(
             $this->clean_data,
             ['file' => 'clamav'],
-            $this->messages
         );
 
         $this->assertTrue($validator->fails());
@@ -195,28 +177,11 @@ class ClamavValidatorTest extends TestCase
 
         $this->expectException(ClamavValidatorException::class);
 
-        $validator = new ClamavValidator(
-            $this->translator,
+        $validator = $this->makeValidator(
             $this->clean_data,
             ['file' => 'clamav'],
-            $this->messages
         );
 
         $this->assertTrue($validator->fails());
-    }
-
-    /**
-     * Move to temp dir, so that clamav can access the file
-     *
-     * @param $file
-     * @return string
-     */
-    private function getTempPath($file): string
-    {
-        $tempPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . basename($file);
-        copy($file, $tempPath);
-        chmod($tempPath, 0644);
-
-        return $tempPath;
     }
 }
