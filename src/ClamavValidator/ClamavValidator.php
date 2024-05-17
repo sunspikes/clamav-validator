@@ -76,7 +76,7 @@ class ClamavValidator extends Validator
         } else {
             $file = $this->getFilePath($value);
             $stream = fopen($file, 'rb');
-            if ($file === false) {
+            if ($stream === false) {
                 throw ClamavValidatorException::forNonReadableFile($file);
             }
         }
