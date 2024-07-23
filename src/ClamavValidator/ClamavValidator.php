@@ -72,10 +72,11 @@ class ClamavValidator extends Validator
 	protected function validateFileWithClamAv($value): bool
     {
         if (is_resource($value)) {
-            $file = $value;
+            $stream = $value;
         } else {
             $file = $this->getFilePath($value);
-            if (! is_readable($file)) {
+            $stream = fopen($file, 'rb');
+            if ($stream === false) {
                 throw ClamavValidatorException::forNonReadableFile($file);
             }
         }
@@ -83,7 +84,6 @@ class ClamavValidator extends Validator
         try {
             $socket = $this->getClamavSocket();
             $scanner = $this->createQuahogScannerClient($socket);
-            $stream = is_resource($file) ? $file : fopen($file, 'rb');
             $result = $scanner->scanResourceStream($stream);
         } catch (Exception $exception) {
             if (Config::get('clamav.client_exceptions')) {
