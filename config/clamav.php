@@ -26,9 +26,26 @@ return [
     |--------------------------------------------------------------------------
     | TCP Socket
     |--------------------------------------------------------------------------
-    | This option defines the TCP socket to the ClamAV instance.
+    | This option defines the TCP socket to the ClamAV instance. Overrides tcp_socket_host and tcp_socket_port
     */
-    'tcp_socket' => env('CLAMAV_TCP_SOCKET', 'tcp://127.0.0.1:3310'),
+    'tcp_socket' => env('CLAMAV_TCP_SOCKET', null),
+
+    /*
+    |--------------------------------------------------------------------------
+    | TCP Host
+    |--------------------------------------------------------------------------
+    | This option defines the TCP host to the ClamAV instance.
+    */
+    'tcp_socket_host' => env('CLAMAV_TCP_HOST', '127.0.0.1'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | TCP Port
+    |--------------------------------------------------------------------------
+    | This option defines the TCP host to the ClamAV instance.
+    */
+    'tcp_socket_port' => env('CLAMAV_TCP_PORT', '3310'),
+
 
     /*
     |--------------------------------------------------------------------------
