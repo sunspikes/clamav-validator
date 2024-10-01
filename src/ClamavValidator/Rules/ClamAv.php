@@ -1,43 +1,20 @@
 <?php
 
-namespace Sunspikes\ClamavValidator;
+namespace Sunspikes\ClamavValidator\Rules;
 
 use Exception;
-use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Validation\Validator;
-use Xenolope\Quahog\Client as QuahogClient;
 use Socket\Raw\Factory as SocketFactory;
+use Sunspikes\ClamavValidator\ClamavValidatorException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Xenolope\Quahog\Client as QuahogClient;
 
 /**
- * @deprecated Use {@see \Sunspikes\ClamavValidator\Rules\ClamAv} validation rule instead.
- *
- * Clamav Validator
+ * ClamAV Validation Rule (Extension)
  */
-class ClamavValidator extends Validator
+class ClamAv
 {
-    /**
-     * Creates a new instance of ClamavValidator.
-     *
-     * ClamavValidator constructor.
-     * @param Translator $translator
-     * @param array      $data
-     * @param array      $rules
-     * @param array      $messages
-     * @param array      $customAttributes
-     */
-    public function __construct(
-        Translator $translator,
-        array $data,
-        array $rules,
-        array $messages = [],
-        array $customAttributes = []
-    ) {
-        parent::__construct($translator, $data, $rules, $messages, $customAttributes);
-    }
-
     /**
      * Validate the uploaded file for virus/malware with ClamAV.
      *
@@ -48,48 +25,43 @@ class ClamavValidator extends Validator
      * @return bool
      * @throws ClamavValidatorException
      */
-    public function validateClamav(string $attribute, $value, array $parameters): bool
+    public function validate(string $attribute, $value, array $parameters): bool
     {
         if (filter_var(Config::get('clamav.skip_validation'), FILTER_VALIDATE_BOOLEAN)) {
             return true;
         }
 
         if(is_array($value)) {
-        	$result = true;
-        	foreach($value as $file) {
-        		$result &= $this->validateFileWithClamAv($file);
-			}
-
-        	return $result;
-		}
-
-		return $this->validateFileWithClamAv($value);
-	}
-
-	/**
-	 * Validate the single uploaded file for virus/malware with ClamAV.
-	 *
-	 * @param $value mixed
-	 *
-	 * @return bool
-	 * @throws ClamavValidatorException
-	 */
-	protected function validateFileWithClamAv($value): bool
-    {
-        if (is_resource($value)) {
-            $stream = $value;
-        } else {
-            $file = $this->getFilePath($value);
-            $stream = fopen($file, 'rb');
-            if ($stream === false) {
-                throw ClamavValidatorException::forNonReadableFile($file);
+            $result = true;
+            foreach($value as $file) {
+                $result &= $this->validateFileWithClamAv($file);
             }
+
+            return $result;
+        }
+
+        return $this->validateFileWithClamAv($value);
+    }
+
+    /**
+     * Validate the single uploaded file for virus/malware with ClamAV.
+     *
+     * @param $value mixed
+     *
+     * @return bool
+     * @throws ClamavValidatorException
+     */
+    protected function validateFileWithClamAv($value): bool
+    {
+        $file = $this->getFilePath($value);
+        if (! is_readable($file)) {
+            throw ClamavValidatorException::forNonReadableFile($file);
         }
 
         try {
-            $socket = $this->getClamavSocket();
+            $socket  = $this->getClamavSocket();
             $scanner = $this->createQuahogScannerClient($socket);
-            $result = $scanner->scanResourceStream($stream);
+            $result  = $scanner->scanResourceStream(fopen($file, 'rb'));
         } catch (Exception $exception) {
             if (Config::get('clamav.client_exceptions')) {
                 throw ClamavValidatorException::forClientException($exception);

@@ -4,6 +4,7 @@ namespace Sunspikes\ClamavValidator;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Sunspikes\ClamavValidator\Rules\ClamAv;
 
 class ClamavValidatorServiceProvider extends ServiceProvider
 {
@@ -13,7 +14,7 @@ class ClamavValidatorServiceProvider extends ServiceProvider
      * @var array
      */
     protected $rules = [
-        'clamav',
+        'clamav' => ClamAv::class,
     ];
 
     /**
@@ -28,21 +29,12 @@ class ClamavValidatorServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../../config/clamav.php' => $this->app->configPath('clamav.php'),
         ], 'config');
+
         $this->publishes([
             __DIR__ . '/../lang' => method_exists($this->app, 'langPath') ?
                 $this->app->langPath().'/vendor/clamav-validator'
                 : $this->app->resourcePath('lang/vendor/clamav-validator'),
         ], 'lang');
-        $this->app['validator']
-            ->resolver(function ($translator, $data, $rules, $messages, $customAttributes = []) {
-                return new ClamavValidator(
-                    $translator,
-                    $data,
-                    $rules,
-                    $messages,
-                    $customAttributes
-                );
-            });
 
         $this->addNewRules();
     }
@@ -57,32 +49,32 @@ class ClamavValidatorServiceProvider extends ServiceProvider
         return $this->rules;
     }
 
-
     /**
      * Add new rules to the validator.
      */
     protected function addNewRules()
     {
-        foreach ($this->getRules() as $rule) {
-            $this->extendValidator($rule);
+        foreach ($this->getRules() as $token => $rule) {
+            $this->extendValidator($token, $rule);
         }
     }
-
 
     /**
      * Extend the validator with new rules.
      *
+     * @param string $token
      * @param string $rule
+     *
      * @return void
      */
-    protected function extendValidator(string $rule)
+    protected function extendValidator(string $token, string $rule)
     {
-        $method = Str::studly($rule);
         $translation = $this->app['translator']->get('clamav-validator::validation');
+
         $this->app['validator']->extend(
-            $rule,
-            ClamavValidator::class . '@validate' . $method,
-            $translation[$rule] ?? []
+            $token,
+            $rule . '@validate',
+            $translation[$token] ?? []
         );
     }
 

@@ -36,18 +36,18 @@ class ClamavValidatorServiceProviderTest extends TestCase
 
         Facade::setFacadeApplication($container);
 
-        $sp = new ClamavValidatorServiceProvider($container);
-        $sp->boot();
+        $serviceProvider = new ClamavValidatorServiceProvider($container);
+        $serviceProvider->boot();
 
         $validator = $factory->make([], []);
 
         foreach ($validator->extensions as $rule => $class_and_method) {
 
-            $this->assertTrue(in_array($rule, $sp->getRules()));
-            $this->assertEquals(ClamavValidator::class .'@validate' . Str::studly($rule), $class_and_method);
+            // Ensure rule exists in service provider ~ that validator has installed it
+            $this->assertArrayHasKey($rule, $serviceProvider->getRules());
 
+            // Ensure that validation rule's validate method can be invoked...
             list($class, $method) = Str::parseCallback($class_and_method);
-
             $this->assertTrue(method_exists($class, $method));
         }
     }
