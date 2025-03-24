@@ -125,7 +125,7 @@ class ClamavValidator extends Validator
         }
 
         // We use the tcp_socket as fallback as well
-        return Config::get('clamav.tcp_socket');
+        return Config::has('clamav.tcp_socket') ? Config::get('clamav.tcp_socket') : "tcp://".Config::get('clamav.tcp_socket_host').":".Config::get('clamav.tcp_socket_port');
     }
 
     /**
