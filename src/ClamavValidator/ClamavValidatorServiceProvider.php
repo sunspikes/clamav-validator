@@ -31,9 +31,7 @@ class ClamavValidatorServiceProvider extends ServiceProvider
         ], 'config');
 
         $this->publishes([
-            __DIR__.'/../lang' => function_exists('lang_path')
-                ? lang_path('vendor/clamav-validator')
-                : resource_path('lang/vendor/clamav-validator'),
+            __DIR__ . '/../lang' => $this->getLanguagePath(),
         ], 'lang');
 
         $this->addNewRules();
@@ -87,5 +85,28 @@ class ClamavValidatorServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__ . '/../../config/clamav.php', 'clamav');
+    }
+
+    /**
+     * Get the language path for the validator.
+     *
+     * This method provides compatibility across multiple Laravel versions.
+     *
+     * @return string
+     */
+    protected function getLanguagePath(): string
+    {
+        // For Laravel 9+
+        if (function_exists('lang_path')) {
+            return lang_path('vendor/clamav-validator');
+        }
+
+        // For Laravel 5.3 - 8.x
+        if (function_exists('resource_path')) {
+            return resource_path('lang/vendor/clamav-validator');
+        }
+
+        // For Laravel 5.0 - 5.2
+        return $this->app->basePath() . '/resources/lang/vendor/clamav-validator';
     }
 }
