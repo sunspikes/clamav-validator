@@ -1,0 +1,23 @@
+language: php
+
+php:
+  - 8.0
+  - 8.1
+  - 8.2
+  - 8.3
+  - 8.4
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install clamav-daemon -qq
+  - sudo freshclam
+  - sudo service clamav-daemon start
+
+before_script:
+  - composer self-update
+  - composer install --prefer-source --no-interaction --dev
+
+script:
+  - php vendor/bin/phpunit --colors --coverage-clover build/logs/clover.xml
+
+after_script: if [ $(phpenv version-name) = "8.4" ]; then php vendor/bin/ocular code-coverage:upload --format=php-clover build/logs/clover.xml; fi
