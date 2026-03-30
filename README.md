@@ -2,7 +2,6 @@
 
 [![Code Coverage](https://scrutinizer-ci.com/g/sunspikes/clamav-validator/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/sunspikes/clamav-validator/?branch=master)
 [![Code Quality](https://scrutinizer-ci.com/g/sunspikes/clamav-validator/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/sunspikes/clamav-validator)
-[![Build Status](https://travis-ci.com/sunspikes/clamav-validator.svg?branch=master)](https://travis-ci.com/sunspikes/clamav-validator)
 [![Latest Stable Version](https://poser.pugx.org/sunspikes/clamav-validator/v/stable)](https://packagist.org/packages/sunspikes/clamav-validator)
 [![License](https://poser.pugx.org/sunspikes/clamav-validator/license)](https://packagist.org/packages/sunspikes/clamav-validator)
 
@@ -10,6 +9,7 @@ A custom Laravel virus validator based on ClamAV anti-virus scanner for file upl
 
 * [Requirements](#requirements)
 * [Installation](#installation)
+* [Configuration](#configuration)
 * [Usage](#usage)
 * [Author](#author)
 
@@ -65,7 +65,22 @@ publish the language files to a folder you maintain:
 
     php artisan vendor:publish --provider="Sunspikes\ClamavValidator\ClamavValidatorServiceProvider" --tag=lang
 
-This will copy the language files to `resources/lang/vendor/clamav-validator`.
+This will copy the language files to `lang/vendor/clamav-validator`.
+
+<a name="configuration"></a>
+## Configuration
+
+The package can be configured using environment variables:
+
+| Environment Variable | Default | Description |
+|---|---|---|
+| `CLAMAV_PREFERRED_SOCKET` | `unix_socket` | Socket type: `unix_socket` or `tcp_socket` |
+| `CLAMAV_UNIX_SOCKET` | `/var/run/clamav/clamd.ctl` | Path to the ClamAV unix socket |
+| `CLAMAV_TCP_SOCKET` | `tcp://127.0.0.1:3310` | TCP socket connection string |
+| `CLAMAV_SOCKET_CONNECT_TIMEOUT` | `null` | Connection timeout in seconds (`null` = no limit) |
+| `CLAMAV_SOCKET_READ_TIMEOUT` | `30` | Read timeout in seconds |
+| `CLAMAV_CLIENT_EXCEPTIONS` | `false` | Throw exceptions on scan failures instead of returning validation failure |
+| `CLAMAV_SKIP_VALIDATION` | `false` | Skip virus scanning entirely (useful for local development) |
 
 <a name="usage"></a>
 ## Usage
@@ -74,11 +89,25 @@ Use it like any `Validator` rule:
 
 ```php
 $rules = [
-    'file' => 'clamav',
+    'file' => 'required|file|clamav',
 ];
 ```
 
-`ClamavValidator` will automatically run multiple files one-by-one through ClamAV in case `file` represent multiple uploaded files.
+Or in a Form Request:
+
+```php
+class UploadRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'file' => 'required|file|clamav',
+        ];
+    }
+}
+```
+
+`ClamavValidator` will automatically run multiple files one-by-one through ClamAV in case `file` represents multiple uploaded files.
 
 <a name="author"></a>
 ## Author
