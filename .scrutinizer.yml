@@ -1,0 +1,10 @@
+checks:
+    php:
+        code_rating: true
+
+filter:
+    paths:
+        - src/ClamavValidator/*
+
+tools:
+    external_code_coverage: true
