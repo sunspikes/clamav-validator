@@ -3,28 +3,21 @@
 namespace Sunspikes\ClamavValidator;
 
 use Exception;
+use Throwable;
 use Xenolope\Quahog\Result;
 
 class ClamavValidatorException extends Exception
 {
-    /**
-     * @param string $file
-     * @return ClamavValidatorException
-     */
-    public static function forNonReadableFile(string $file): ClamavValidatorException
+    public static function forNonReadableFile(string $file): static
     {
-        return new self(
+        return new static(
             sprintf('The file "%s" is not readable', $file)
         );
     }
 
-    /**
-     * @param Result $result
-     * @return ClamavValidatorException
-     */
-    public static function forScanResult(Result $result): ClamavValidatorException
+    public static function forScanResult(Result $result): static
     {
-        return new self(
+        return new static(
             sprintf(
                 'ClamAV scanner failed to scan file "%s" with error "%s"',
                 $result->getFilename(),
@@ -33,13 +26,9 @@ class ClamavValidatorException extends Exception
         );
     }
 
-    /**
-     * @param Exception $exception
-     * @return ClamavValidatorException
-     */
-    public static function forClientException(Exception $exception): ClamavValidatorException
+    public static function forClientException(Throwable $exception): static
     {
-        return new self(
+        return new static(
             sprintf('ClamAV scanner client failed with error "%s"', $exception->getMessage()),
             0,
             $exception

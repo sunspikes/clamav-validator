@@ -13,37 +13,37 @@ class ClamavValidatorTest extends TestCase
 {
     use ValidatorHelper;
 
-    protected $clean_data;
-    protected $virus_data;
-    protected $error_data;
-    protected $rules;
-    protected $multiple_files_all_clean;
-    protected $multiple_files_some_with_virus;
+    protected string $cleanFile;
+    protected string $virusFile;
+    protected string $errorFile;
+    protected array $clean_data;
+    protected array $virus_data;
+    protected array $error_data;
+    protected array $multiple_files_all_clean;
+    protected array $multiple_files_some_with_virus;
 
     protected function setUp(): void
     {
-        $this->clean_data = [
-            'file' => $this->getTempPath(__DIR__ . '/files/test1.txt')
-        ];
-        $this->virus_data = [
-            'file' => $this->getTempPath(__DIR__ . '/files/test2.txt')
-        ];
-        $this->error_data = [
-            'file' => $this->getTempPath(__DIR__ . '/files/test3.txt')
-        ];
+        $this->cleanFile = $this->getTempPath(__DIR__ . '/files/test1.txt');
+        $this->virusFile = $this->getTempPath(__DIR__ . '/files/test2.txt');
+        $this->errorFile = $this->getTempPath(__DIR__ . '/files/test3.txt');
+
+        $this->clean_data = ['file' => $this->cleanFile];
+        $this->virus_data = ['file' => $this->virusFile];
+        $this->error_data = ['file' => $this->errorFile];
         $this->multiple_files_all_clean = [
-        	'files' => [
-				$this->getTempPath(__DIR__ . '/files/test1.txt'),
-				$this->getTempPath(__DIR__ . '/files/test4.txt'),
-			]
-		];
+            'files' => [
+                $this->cleanFile,
+                $this->getTempPath(__DIR__ . '/files/test4.txt'),
+            ]
+        ];
         $this->multiple_files_some_with_virus = [
-			'files' => [
-				$this->getTempPath(__DIR__ . '/files/test1.txt'),
-				$this->getTempPath(__DIR__ . '/files/test2.txt'),
-				$this->getTempPath(__DIR__ . '/files/test4.txt'),
-			]
-		];
+            'files' => [
+                $this->cleanFile,
+                $this->virusFile,
+                $this->getTempPath(__DIR__ . '/files/test4.txt'),
+            ]
+        ];
     }
 
     private function setConfig(array $opts = []): void
@@ -64,14 +64,14 @@ class ClamavValidatorTest extends TestCase
 
     protected function tearDown(): void
     {
-        chmod($this->error_data['file'], 0644);
+        chmod($this->errorFile, 0644);
 
         Container::getInstance()->flush();
 
         Mockery::close();
     }
 
-    public function testValidatesSkipped()
+    public function testValidatesSkipped(): void
     {
         $this->setConfig(['skip' => true]);
 
@@ -83,7 +83,7 @@ class ClamavValidatorTest extends TestCase
         $this->assertTrue($validator->passes());
     }
 
-    public function testValidatesSkippedForBoolValidatedConfigValues()
+    public function testValidatesSkippedForBoolValidatedConfigValues(): void
     {
         $this->setConfig(['skip' => '1']);
 
@@ -95,7 +95,7 @@ class ClamavValidatorTest extends TestCase
         $this->assertTrue($validator->passes());
     }
 
-    public function testValidatesClean()
+    public function testValidatesClean(): void
     {
         $this->setConfig();
 
@@ -107,19 +107,19 @@ class ClamavValidatorTest extends TestCase
         $this->assertTrue($validator->passes());
     }
 
-	public function testValidatesCleanMultiFile()
-	{
+    public function testValidatesCleanMultiFile(): void
+    {
         $this->setConfig();
 
         $validator = $this->makeValidator(
-			$this->multiple_files_all_clean,
-			['files' => 'clamav'],
+            $this->multiple_files_all_clean,
+            ['files' => 'clamav'],
         );
 
-		$this->assertTrue($validator->passes());
-	}
+        $this->assertTrue($validator->passes());
+    }
 
-    public function testValidatesVirus()
+    public function testValidatesVirus(): void
     {
         $this->setConfig();
 
@@ -131,8 +131,8 @@ class ClamavValidatorTest extends TestCase
         $this->assertTrue($validator->fails());
     }
 
-	public function testValidatesVirusMultiFile()
-	{
+    public function testValidatesVirusMultiFile(): void
+    {
         $this->setConfig();
 
         $validator = $this->makeValidator(
@@ -140,10 +140,10 @@ class ClamavValidatorTest extends TestCase
             ['files' => 'clamav'],
         );
 
-		$this->assertTrue($validator->fails());
-	}
+        $this->assertTrue($validator->fails());
+    }
 
-    public function testCannotValidateNonReadable()
+    public function testCannotValidateNonReadable(): void
     {
         $this->setConfig();
 
@@ -154,12 +154,12 @@ class ClamavValidatorTest extends TestCase
             ['file' => 'clamav'],
         );
 
-        chmod($this->error_data['file'], 0000);
+        chmod($this->errorFile, 0000);
 
         $validator->passes();
     }
 
-    public function testFailsValidationOnError()
+    public function testFailsValidationOnError(): void
     {
         $this->setConfig(['error' => true]);
 
@@ -171,7 +171,7 @@ class ClamavValidatorTest extends TestCase
         $this->assertTrue($validator->fails());
     }
 
-    public function testThrowsExceptionOnValidationError()
+    public function testThrowsExceptionOnValidationError(): void
     {
         $this->setConfig(['error' => true, 'exception' => true]);
 
