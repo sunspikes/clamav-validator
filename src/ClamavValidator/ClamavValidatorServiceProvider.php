@@ -3,26 +3,15 @@
 namespace Sunspikes\ClamavValidator;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 use Sunspikes\ClamavValidator\Rules\ClamAv;
 
 class ClamavValidatorServiceProvider extends ServiceProvider
 {
-    /**
-     * The list of validator rules.
-     *
-     * @var array
-     */
-    protected $rules = [
+    protected array $rules = [
         'clamav' => ClamAv::class,
     ];
 
-    /**
-     * Bootstrap the application events.
-     *
-     * @return void
-     */
-    public function boot()
+    public function boot(): void
     {
         $this->loadTranslationsFrom(__DIR__ . '/../lang', 'clamav-validator');
 
@@ -31,41 +20,25 @@ class ClamavValidatorServiceProvider extends ServiceProvider
         ], 'config');
 
         $this->publishes([
-            __DIR__ . '/../lang' => $this->getLanguagePath(),
+            __DIR__ . '/../lang' => lang_path('vendor/clamav-validator'),
         ], 'lang');
 
         $this->addNewRules();
     }
 
-    /**
-     * Get the list of new rules being added to the validator.
-     *
-     * @return array
-     */
     public function getRules(): array
     {
         return $this->rules;
     }
 
-    /**
-     * Add new rules to the validator.
-     */
-    protected function addNewRules()
+    protected function addNewRules(): void
     {
         foreach ($this->getRules() as $token => $rule) {
             $this->extendValidator($token, $rule);
         }
     }
 
-    /**
-     * Extend the validator with new rules.
-     *
-     * @param string $token
-     * @param string $rule
-     *
-     * @return void
-     */
-    protected function extendValidator(string $token, string $rule)
+    protected function extendValidator(string $token, string $rule): void
     {
         $translation = $this->app['translator']->get('clamav-validator::validation');
 
@@ -76,37 +49,8 @@ class ClamavValidatorServiceProvider extends ServiceProvider
         );
     }
 
-
-    /**
-     * Register the service provider.
-     *
-     * @return void
-     */
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../../config/clamav.php', 'clamav');
-    }
-
-    /**
-     * Get the language path for the validator.
-     *
-     * This method provides compatibility across multiple Laravel versions.
-     *
-     * @return string
-     */
-    protected function getLanguagePath(): string
-    {
-        // For Laravel 9+
-        if (function_exists('lang_path')) {
-            return lang_path('vendor/clamav-validator');
-        }
-
-        // For Laravel 5.3 - 8.x
-        if (function_exists('resource_path')) {
-            return resource_path('lang/vendor/clamav-validator');
-        }
-
-        // For Laravel 5.0 - 5.2
-        return $this->app->basePath() . '/resources/lang/vendor/clamav-validator';
     }
 }

@@ -11,12 +11,11 @@ use Mockery;
 use Illuminate\Validation\Factory;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\TestCase;
-use Sunspikes\ClamavValidator\ClamavValidator;
 use Sunspikes\ClamavValidator\ClamavValidatorServiceProvider;
 
 class ClamavValidatorServiceProviderTest extends TestCase
 {
-    public function testBoot()
+    public function testBoot(): void
     {
         $translator = Mockery::mock(Translator::class);
         $translator->shouldReceive('get')->with('clamav-validator::validation')->andReturn('error');
@@ -32,7 +31,6 @@ class ClamavValidatorServiceProviderTest extends TestCase
         $container->shouldReceive('offsetGet')->with('translator')->andReturn($translator);
         $container->shouldReceive('offsetGet')->with('validator')->andReturn($factory);
         $container->shouldReceive('configPath');
-        $container->shouldReceive('resourcePath');
 
         Facade::setFacadeApplication($container);
 
@@ -42,12 +40,9 @@ class ClamavValidatorServiceProviderTest extends TestCase
         $validator = $factory->make([], []);
 
         foreach ($validator->extensions as $rule => $class_and_method) {
-
-            // Ensure rule exists in service provider ~ that validator has installed it
             $this->assertArrayHasKey($rule, $serviceProvider->getRules());
 
-            // Ensure that validation rule's validate method can be invoked...
-            list($class, $method) = Str::parseCallback($class_and_method);
+            [$class, $method] = Str::parseCallback($class_and_method);
             $this->assertTrue(method_exists($class, $method));
         }
     }

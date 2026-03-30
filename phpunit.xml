@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit backupGlobals="false"
-         backupStaticAttributes="false"
          bootstrap="vendor/autoload.php"
          colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
 >
-    <coverage processUncoveredFiles="true">
+    <source>
         <include>
             <directory suffix=".php">src</directory>
         </include>
-    </coverage>
+    </source>
     <testsuites>
         <testsuite name="ClamAV Validator Test Suite">
             <directory suffix=".php">./tests/</directory>
